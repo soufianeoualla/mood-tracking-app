@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-neutral-900: #21214d;
+  --color-neutral-600: #57577b;
+  --color-neutral-300: #9393b7;
+  --color-neutral-200: #cbcdd0;
+  --color-neutral-0: #ffffff;
+
+  --color-blue-700: #2a4cd5;
+  --color-blue-600: #4865db;
+  --color-blue-300: #89caff;
+  --color-blue-200: #c7d3f7;
+  --color-blue-100: #e0e6fa;
+
+  --color-red-700: #e60013;
+  --color-red-300: #ff9b99;
+
+  --color-indigo-200: #b8b1ff;
+
+  --color-green-300: #89e780;
+  --color-amber-300: #ffc97c;
+}
+.custom-linear-gradiant {
+  background-image: linear-gradient(180deg, #f5f5ff 72.99%, #e0e0ff 100%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.text-preset-1 {
+  @apply font-bold text-[52px] leading-[140%] tracking-[-2px];
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.text-preset-1-mobile {
+  @apply font-bold text-[46px] leading-[120%] tracking-[-0.125em];
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.text-preset-2 {
+  @apply font-bold text-[40px] leading-[120%] tracking-[-0.01875em];
+}
+
+.text-preset-2-mobile {
+  @apply font-bold text-[32px] leading-[120%] tracking-[-0.01875em];
+}
+
+.text-preset-3 {
+  @apply font-bold text-[32px] leading-[140%] tracking-[-0.3px];
+}
+
+.text-preset-3-mobile {
+  @apply font-bold text-[28px] leading-[130%] tracking-[-0.01875em];
+}
+
+.text-preset-4 {
+  @apply font-semibold text-[24px] leading-[140%];
+}
+
+.text-preset-4-regular {
+  @apply font-normal text-[24px] leading-[140%];
+}
+
+.text-preset-5 {
+  @apply font-semibold text-[20px] leading-[140%];
+}
+
+.text-preset-6 {
+  @apply font-medium text-[18px] leading-[120%];
+}
+
+.text-preset-6-italic {
+  @apply italic font-medium text-[18px] leading-[130%];
+}
+
+.text-preset-6-regular {
+  @apply font-normal text-[18px] leading-[140%] tracking-[-0.01875em];
+}
+
+.text-preset-7 {
+  @apply font-normal text-[15px] leading-[140%] tracking-[-0.01875em];
+}
+
+.text-preset-8 {
+  @apply font-semibold text-[13px] leading-[100%];
+}
+
+.text-preset-9 {
+  @apply font-normal text-[12px] leading-[110%];
 }
