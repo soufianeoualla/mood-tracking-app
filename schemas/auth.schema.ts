@@ -7,6 +7,6 @@ const authSchema = z.object({
     .min(6, { message: "Password must be at least 6 characters" }),
 });
 
-export type AuthSchema = z.infer<typeof authSchema>;
+export type AuthSchemaType = z.infer<typeof authSchema>;
 
 export default authSchema;

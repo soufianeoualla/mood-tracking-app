@@ -2,7 +2,7 @@
 import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Label from "@/components/ui/label";
-import authSchema, { AuthSchema } from "@/schemas/auth";
+import authSchema, { AuthSchema } from "@/schemas/auth.schema";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname } from "next/navigation";

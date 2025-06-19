@@ -1,7 +1,8 @@
 [
-  { "label": "9+ hours", "min": 9, "max": null },
-  { "label": "7-8 hours", "min": 7, "max": 8 },
-  { "label": "5-6 hours", "min": 5, "max": 6 },
-  { "label": "3-4 hours", "min": 3, "max": 4 },
-  { "label": "0-2 hours", "min": 0, "max": 2 }
+  { "label": "9+ hours", "value":9 },
+  { "label": "7-8 hours", "value":7 },
+  { "label": "5-6 hours", "value":6 },
+  { "label": "3-4 hours", "value":4 },
+  { "label": "0-2 hours", "value":2 }
+
 ]

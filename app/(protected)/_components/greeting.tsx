@@ -3,7 +3,7 @@
 import Button from "@/components/ui/button";
 import Modal from "@/components/ui/modal";
 import React, { useState } from "react";
-import LogMood from "./loog-mood";
+import LogMood from "./log-mood";
 
 const Greeting = () => {
   const [showModal, setShowModal] = useState(false);
