@@ -1,20 +1,22 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { db } from "@/config/db";
+import { Prisma } from "@prisma/client";
 
 export class UserRepository {
   async getAllUsers() {
-    return await prisma.user.findMany();
+    return await db.user.findMany();
   }
 
-  async getUserById(id: string) {
-    return await prisma.user.findUnique({ where: { id } });
+  async getUserById(id: number) {
+    return await db.user.findUnique({ where: { id } });
   }
   async getUserByEmail(email: string) {
-    return await prisma.user.findUnique({ where: { email } });
+    return await db.user.findUnique({ where: { email } });
   }
 
-  async createUser(data: { email: string; password: string }) {
-    return await prisma.user.create({ data });
+  async createUser(data: Prisma.UserCreateInput) {
+    return await db.user.create({ data });
+  }
+  async updateUser(id: number, data: Prisma.UserUpdateInput) {
+    return await db.user.update({ where: { id }, data });
   }
 }

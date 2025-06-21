@@ -4,7 +4,7 @@ import { verify, JwtPayload } from "jsonwebtoken";
 
 // Define the JWT payload interface
 interface AuthJwtPayload extends JwtPayload {
-  id: string;
+  id: number;
   email: string;
 }
 

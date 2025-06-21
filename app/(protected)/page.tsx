@@ -3,7 +3,7 @@ import Greeting from "./_components/greeting";
 import Header from "./_components/header";
 import MoodSleepChart from "./_components/mood-sleep-chart";
 
-export default function Home() {
+function Home() {
   return (
     <main className="max-w-[1170px] pt-10 pb-20 w-full">
       <Header />
@@ -15,3 +15,5 @@ export default function Home() {
     </main>
   );
 }
+
+export default Home;

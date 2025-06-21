@@ -6,15 +6,12 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-
 
 enum Feeling {
   JOYFUL
@@ -42,14 +39,15 @@ enum Feeling {
 // Usage
 
 model User {
-  id         Int         @id @default(autoincrement())
-  name       String
-  email      String      @unique
-  password   String?
-  coverImage String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  MoodEntry  MoodEntry[]
+  id                 Int         @id @default(autoincrement())
+  name               String?
+  email              String      @unique
+  password           String?
+  cover              String?
+  onboardingComplete Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  MoodEntry          MoodEntry[]
 }
 
 model MoodEntry {
@@ -60,8 +58,8 @@ model MoodEntry {
   feelings   Feeling[]
   sleepHours Int
 
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id])
 }

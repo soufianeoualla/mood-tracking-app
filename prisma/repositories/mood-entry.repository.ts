@@ -1,11 +1,9 @@
 import { Prisma } from "@/app/generated/prisma";
-import {  PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { db } from "@/config/db";
 
 export class MoodEntryRepository {
   async getAllEntries(userId: number) {
-    return await prisma.moodEntry.findMany({
+    return await db.moodEntry.findMany({
       where: { userId },
     });
   }
@@ -15,7 +13,7 @@ export class MoodEntryRepository {
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
-    return await prisma.moodEntry.findMany({
+    return await db.moodEntry.findMany({
       where: {
         userId,
         createdAt: {
@@ -26,22 +24,22 @@ export class MoodEntryRepository {
     });
   }
 
-  async getEntryById(id: string) {
-    return await prisma.moodEntry.findUnique({ where: { id } });
+  async getEntryById(id: number) {
+    return await db.moodEntry.findUnique({ where: { id } });
   }
 
   async createEntry(data: Prisma.MoodEntryCreateInput) {
-    return await prisma.moodEntry.create({ data });
+    return await db.moodEntry.create({ data });
   }
 
-  async updateEntry(id: string, data: { mood?: string; comment?: string }) {
-    return await prisma.moodEntry.update({
+  async updateEntry(id: number, data: Prisma.MoodEntryCreateInput) {
+    return await db.moodEntry.update({
       where: { id },
       data,
     });
   }
 
-  async deleteEntry(id: string) {
-    return await prisma.moodEntry.delete({ where: { id } });
+  async deleteEntry(id: number) {
+    return await db.moodEntry.delete({ where: { id } });
   }
 }

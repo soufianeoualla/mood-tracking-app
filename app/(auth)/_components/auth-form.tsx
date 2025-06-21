@@ -2,15 +2,23 @@
 import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Label from "@/components/ui/label";
-import authSchema, { AuthSchema } from "@/schemas/auth.schema";
+import authSchema, { AuthSchemaType } from "@/schemas/auth.schema";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
+import signUpService from "./_services/sign-up.service";
+import loginService from "./_services/login.service";
+import FormMessage from "./form-message";
+import useAuthStore from "@/store/useAuthStore";
 
 const AuthForm = () => {
-  const form = useForm<AuthSchema>({
+  const [successMessage, setSuccessMessage] = useState("");
+  const { setToken, setUser } = useAuthStore();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const form = useForm<AuthSchemaType>({
     resolver: zodResolver(authSchema),
     defaultValues: {
       email: "",
@@ -18,15 +26,39 @@ const AuthForm = () => {
     },
     mode: "onChange",
   });
-  const { control } = form;
+  const { control, reset } = form;
 
   const pathname = usePathname();
 
   const isLogin = pathname.includes("login");
 
-  const onSubmit = (data: AuthSchema) => {
-    console.log("Form submitted with data:", data);
-    // Handle form submission logic here, e.g., API call
+  const onSubmit = async (data: AuthSchemaType) => {
+    startTransition(async () => {
+      try {
+        if (isLogin) {
+          const response = await loginService(data);
+          setSuccessMessage(response.message);
+          console.log("Login response:", response);
+          setToken(response.token);
+          setUser({
+            id: response.user.id,
+            email: response.user.email,
+            cover: response.user.cover,
+            onboardingComplete: response.user.onboardingComplete,
+          });
+          reset();
+        } else {
+          const response = await signUpService(data);
+          setSuccessMessage(response.message);
+          reset();
+        }
+      } catch (error: any) {
+        console.error("Error during authentication:", error);
+        setErrorMessage(
+          error.response?.data || `${isLogin ? "Login" : "Signup"} failed`
+        );
+      }
+    });
   };
 
   return (
@@ -37,7 +69,15 @@ const AuthForm = () => {
           control={control}
           name="email"
           render={({ field }) => (
-            <Input type="email" placeholder="name@mail.com" {...field} />
+            <Input
+              type="email"
+              onFocus={() => {
+                setSuccessMessage("");
+                setErrorMessage("");
+              }}
+              placeholder="name@mail.com"
+              {...field}
+            />
           )}
         />
       </div>
@@ -56,8 +96,12 @@ const AuthForm = () => {
           )}
         />
       </div>
+      <FormMessage message={successMessage} />
+      <FormMessage message={errorMessage} isError />
 
-      <Button className="w-full">{isLogin ? "Login" : "Sign Up"}</Button>
+      <Button className="w-full" disabled={isPending}>
+        {isLogin ? "Login" : "Sign Up"}
+      </Button>
     </form>
   );
 };
