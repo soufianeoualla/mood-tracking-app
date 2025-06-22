@@ -7,7 +7,9 @@ function Home() {
   return (
     <main className="max-w-[1170px] pt-10 pb-20 w-full">
       <Header />
+
       <Greeting />
+
       <div className="grid grid-cols-[370px_1fr] gap-x-8 ">
         <AverageMoodSleep />
         <MoodSleepChart />

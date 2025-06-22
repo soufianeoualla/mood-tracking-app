@@ -12,6 +12,7 @@ import signUpService from "./_services/sign-up.service";
 import loginService from "./_services/login.service";
 import FormMessage from "./form-message";
 import useAuthStore from "@/store/useAuthStore";
+import { AxiosError } from "axios";
 
 const AuthForm = () => {
   const [successMessage, setSuccessMessage] = useState("");
@@ -52,11 +53,14 @@ const AuthForm = () => {
           setSuccessMessage(response.message);
           reset();
         }
-      } catch (error: any) {
-        console.error("Error during authentication:", error);
-        setErrorMessage(
-          error.response?.data || `${isLogin ? "Login" : "Signup"} failed`
-        );
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          setErrorMessage(
+            error.response?.data || `${isLogin ? "Login" : "Signup"} failed`
+          );
+
+          return;
+        }
       }
     });
   };

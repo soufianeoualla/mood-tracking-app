@@ -11,6 +11,7 @@ import useAuthStore from "@/store/useAuthStore";
 import FormMessage from "@/app/(auth)/_components/form-message";
 import uploadService from "../_services/upload.service";
 import { Upload, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { AxiosError } from "axios";
 
 interface FileValidationResult {
   (file: File): string | null;
@@ -92,8 +93,12 @@ const OnboardingForm = () => {
       if (field?.onChange) {
         field.onChange(result.secure_url);
       }
-    } catch (err: any) {
-      setErrorMessage(err.message || "Failed to upload image");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setErrorMessage(err.message || "Failed to upload image");
+      } else {
+        setErrorMessage("Failed to upload image");
+      }
       setUploadStatus("error");
     }
   };
@@ -139,9 +144,10 @@ const OnboardingForm = () => {
       const response = await onboardingService(data);
       setUser(response.user);
       reset();
-    } catch (error: any) {
-      console.error("Error during form submission:", error);
-      setErrorMessage(error?.response?.data || "Failed to submit the form");
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setErrorMessage(err?.response?.data || "Failed to submit the form");
+      }
     } finally {
       setIsSubmitting(false);
     }

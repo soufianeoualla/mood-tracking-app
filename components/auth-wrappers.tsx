@@ -1,5 +1,6 @@
 "use client";
 import useAuthStore from "@/store/useAuthStore";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -34,7 +35,11 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   }, [isInitialized, user, router]);
 
   if (isLoading || !isInitialized) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   }
 
   if (!user) {

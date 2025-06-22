@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import React from "react";
 

@@ -31,7 +31,7 @@ const app = new Hono().post(
         user: {
           id: user.id,
           email: user.email,
-          name,
+          name:name.toLowerCase(),
           cover,
           onboardingComplete: true,
         },

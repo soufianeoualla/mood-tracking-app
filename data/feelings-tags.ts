@@ -1,4 +1,4 @@
-[
+export const feelingsTags = [
   "Joyful",
   "Down",
   "Anxious",
@@ -18,5 +18,7 @@
   "Content",
   "Disappointed",
   "Optimistic",
-  "Restless"
-]
+  "Restless",
+] as const;
+
+

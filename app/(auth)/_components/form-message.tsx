@@ -1,5 +1,5 @@
 import { CircleInfo } from "@/components/icons";
-import { cn } from "@/utils";
+import { cn } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 import React from "react";
 

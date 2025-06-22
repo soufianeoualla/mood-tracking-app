@@ -1,32 +1,33 @@
 import Button from "@/components/ui/button";
 
-import { cn } from "@/utils";
+import { cn } from "@/lib/utils";
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useTransition } from "react";
 import { ChevronLeft } from "lucide-react";
 import MoodStep from "./steps/mood-step";
-import FeelingsStep, { MAX_FEELINGS } from "./steps/feeling-step";
+import FeelingsStep from "./steps/feeling-step";
 import JournalStep from "./steps/journal-step";
 import SleepStep from "./steps/sleep-step";
+import logMoodService from "../_services/log-mood.service";
+import { useMood } from "../_context/mood-context";
+import toast from "react-hot-toast";
 
-// Types
 interface MoodData {
   mood: number;
   feelings: string[];
-  journalEntry: string;
+  comment: string;
   sleepHours: number;
 }
 
 interface ValidationErrors {
   mood?: string;
   feelings?: string;
-  journalEntry?: string;
+  comment?: string;
   sleepHours?: string;
 }
 
 const MIN_JOURNAL_LENGTH = 10;
 
-// Validation functions
 const validateStep = (step: number, data: MoodData): ValidationErrors => {
   const errors: ValidationErrors = {};
 
@@ -42,8 +43,8 @@ const validateStep = (step: number, data: MoodData): ValidationErrors => {
       }
       break;
     case 3:
-      if (data.journalEntry.trim().length < MIN_JOURNAL_LENGTH) {
-        errors.journalEntry = `Please write a few words about your day before continuing. Minimum ${MIN_JOURNAL_LENGTH} characters required.`;
+      if (data.comment.trim().length < MIN_JOURNAL_LENGTH) {
+        errors.comment = `Please write a few words about your day before continuing. Minimum ${MIN_JOURNAL_LENGTH} characters required.`;
       }
       break;
     case 4:
@@ -82,43 +83,11 @@ const ProgressBar = ({
 );
 
 // Main component
-const LogMood = () => {
+const LogMood = ({ hide }: { hide: () => void }) => {
   const [step, setStep] = useState(1);
-  const [data, setData] = useState<MoodData>({
-    mood: -1,
-    feelings: [],
-    journalEntry: "",
-    sleepHours: -1,
-  });
-  const [errors, setErrors] = useState<ValidationErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data, setErrors, resetData } = useMood();
 
-  const handleMoodChange = useCallback((index: number) => {
-    setData((prev) => ({ ...prev, mood: index }));
-    setErrors((prev) => ({ ...prev, mood: undefined }));
-  }, []);
-
-  const handleFeelingsChange = useCallback((feeling: string) => {
-    setData((prev) => ({
-      ...prev,
-      feelings: prev.feelings.includes(feeling)
-        ? prev.feelings.filter((f) => f !== feeling)
-        : prev.feelings.length < MAX_FEELINGS
-        ? [...prev.feelings, feeling]
-        : prev.feelings,
-    }));
-    setErrors((prev) => ({ ...prev, feelings: undefined }));
-  }, []);
-
-  const handleJournalChange = useCallback((text: string) => {
-    setData((prev) => ({ ...prev, journalEntry: text }));
-    setErrors((prev) => ({ ...prev, journalEntry: undefined }));
-  }, []);
-
-  const handleSleepChange = useCallback((index: number) => {
-    setData((prev) => ({ ...prev, sleepHours: index }));
-    setErrors((prev) => ({ ...prev, sleepHours: undefined }));
-  }, []);
+  const [isPending, startTransition] = useTransition();
 
   const handleNext = useCallback(async () => {
     const stepErrors = validateStep(step, data);
@@ -133,69 +102,34 @@ const LogMood = () => {
     if (step < 4) {
       setStep((prev) => prev + 1);
     } else {
-      // Handle form submission
-      setIsSubmitting(true);
-      try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log("Form submitted:", data);
-        // Reset form or show success message
-        alert("Mood logged successfully!");
-      } catch (error) {
-        console.error("Submission error:", error);
-        alert("Failed to submit. Please try again.");
-      } finally {
-        setIsSubmitting(false);
-      }
+      startTransition(async () => {
+        try {
+          await logMoodService(data);
+          toast.success("Mood logged successfully!");
+          resetData();
+
+          hide();
+        } catch (error) {
+          console.error("Error submitting mood data:", error);
+        }
+      });
     }
-  }, [step, data]);
+  }, [step, data, setErrors, resetData, hide]);
 
   const currentStepComponent = useMemo(() => {
     switch (step) {
       case 1:
-        return (
-          <MoodStep
-            mood={data.mood}
-            onMoodChange={handleMoodChange}
-            error={errors.mood}
-          />
-        );
+        return <MoodStep />;
       case 2:
-        return (
-          <FeelingsStep
-            feelings={data.feelings}
-            onFeelingsChange={handleFeelingsChange}
-            error={errors.feelings}
-          />
-        );
+        return <FeelingsStep />;
       case 3:
-        return (
-          <JournalStep
-            text={data.journalEntry}
-            onTextChange={handleJournalChange}
-            error={errors.journalEntry}
-          />
-        );
+        return <JournalStep />;
       case 4:
-        return (
-          <SleepStep
-            selectedOption={data.sleepHours}
-            onOptionChange={handleSleepChange}
-            error={errors.sleepHours}
-          />
-        );
+        return <SleepStep />;
       default:
         return null;
     }
-  }, [
-    step,
-    data,
-    errors,
-    handleMoodChange,
-    handleFeelingsChange,
-    handleJournalChange,
-    handleSleepChange,
-  ]);
+  }, [step]);
 
   const canGoBack = step > 1;
   const buttonText = step === 4 ? "Submit" : "Continue";
@@ -213,7 +147,7 @@ const LogMood = () => {
           <Button
             onClick={() => setStep((prev) => prev - 1)}
             variant="secondary"
-            disabled={isSubmitting}
+            disabled={isPending}
           >
             <ChevronLeft width={30} height={30} />
           </Button>
@@ -221,9 +155,9 @@ const LogMood = () => {
         <Button
           onClick={handleNext}
           className={canGoBack ? "flex-1" : "w-full"}
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? "Submitting..." : buttonText}
+          {isPending ? "Submitting..." : buttonText}
         </Button>
       </div>
     </div>

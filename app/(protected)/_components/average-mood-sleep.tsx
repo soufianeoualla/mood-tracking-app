@@ -1,37 +1,40 @@
-import { Mood } from "@/types";
-import { cn } from "@/utils";
-import React from "react";
+"use client";
+
+import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Happy, Neutral, Sad, VeryHappy, VerySad } from "@/components/icons";
 import pattern from "@/assets/pattern.svg";
 import Image from "next/image";
+import getAverageMoodAndSleep from "../_services/get-average-mood-and-sleep.service";
+import { getSleepHours } from "./logged-mood";
 
-const AverageMoodCard = ({ mood }: { mood?: Mood }) => {
+const AverageMoodCard = ({ mood }: { mood?: number }) => {
   let moodColor = "bg-neutral-200";
   let Icon = Neutral;
   let moodText = "";
   switch (mood) {
-    case "happy":
+    case 1:
       moodColor = "bg-green-300";
       Icon = Happy;
       moodText = "Happy";
       break;
-    case "very happy":
+    case 2:
       moodColor = "bg-amber-300";
       Icon = VeryHappy;
       moodText = "Very Happy";
       break;
-    case "sad":
+    case -1:
       moodColor = "bg-indigo-200";
       Icon = Sad;
       moodText = "Sad";
       break;
-    case "neutral":
+    case 0:
       moodColor = "bg-blue-300";
       Icon = Neutral;
       moodText = "Neutral";
       break;
-    case "very sad":
+    case -2:
       moodColor = "bg-red-300";
       Icon = VerySad;
       moodText = "Very Sad";
@@ -72,7 +75,7 @@ const AverageSleepCard = ({ sleepHours }: { sleepHours?: string }) => {
       />
       <div className="flex items-center gap-x-4">
         <h4 className="text-preset-4">
-          {sleepHours ? `${sleepHours} hours` : "No data"}
+          {sleepHours ? `${sleepHours}` : "No data"}
         </h4>
       </div>
       <div className="flex items-center gap-x-2  text-preset-7">
@@ -84,6 +87,26 @@ const AverageSleepCard = ({ sleepHours }: { sleepHours?: string }) => {
 };
 
 const AverageMoodSleep = () => {
+  const [average, setAverage] = useState<{
+    averageMood: number | null;
+    averageSleepHours: number | null;
+  }>();
+  const fetchAverageMoodandSleep = async () => {
+    try {
+      const data = await getAverageMoodAndSleep();
+      setAverage(data);
+    } catch (error) {
+      console.error("Error fetching average mood and sleep:", error);
+      // Handle error appropriately, e.g., show a notification or log it
+    }
+  };
+
+  useEffect(() => {
+    fetchAverageMoodandSleep();
+  }, []);
+
+  const sleepHours = getSleepHours(average?.averageSleepHours ?? 1);
+
   return (
     <div className="bg-neutral-0 rounded-2xl p-6 border border-blue-100  space-y-6 h-full flex flex-col relative">
       {" "}
@@ -94,7 +117,7 @@ const AverageMoodSleep = () => {
             (Last 5 Check-ins)
           </span>
         </h5>
-        <AverageMoodCard mood={Mood.Happy} />
+        <AverageMoodCard mood={average?.averageMood ?? 0} />
       </div>
       <div className="space-y-3 flex flex-col h-full">
         <h5 className="text-preset-5 text-neutral-900">
@@ -103,7 +126,7 @@ const AverageMoodSleep = () => {
             (Last 5 Check-ins)
           </span>
         </h5>
-        <AverageSleepCard sleepHours={"5-6"} />
+        <AverageSleepCard sleepHours={sleepHours?.label} />
       </div>
     </div>
   );

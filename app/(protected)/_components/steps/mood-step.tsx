@@ -1,19 +1,22 @@
 import ErrorMessage from "@/components/error-message";
 import { Happy, VeryHappy, Neutral, Sad, VerySad } from "@/components/icons";
 import Radio from "@/components/ui/radio";
-import { cn } from "@/utils";
+import { cn } from "@/lib/utils";
 import React from "react";
+import { useMood } from "../../_context/mood-context";
+import { MoodEntrySchemaType } from "@/schemas/mood.entry";
 
 interface MoodOption {
   mood: string;
   Icon: React.ComponentType<{ className?: string }>;
+  value: MoodEntrySchemaType["mood"];
 }
-const MOODS: MoodOption[] = [
-  { mood: "Very Happy", Icon: VeryHappy },
-  { mood: "Happy", Icon: Happy },
-  { mood: "Neutral", Icon: Neutral },
-  { mood: "Sad", Icon: Sad },
-  { mood: "Very Sad", Icon: VerySad },
+export const MOODS: MoodOption[] = [
+  { mood: "Very Happy", Icon: VeryHappy, value: 2 },
+  { mood: "Happy", Icon: Happy, value: 1 },
+  { mood: "Neutral", Icon: Neutral, value: 0 },
+  { mood: "Sad", Icon: Sad, value: -1 },
+  { mood: "Very Sad", Icon: VerySad, value: -2 },
 ];
 
 const Mood = React.memo(
@@ -45,32 +48,32 @@ const Mood = React.memo(
 );
 Mood.displayName = "Mood";
 
-const MoodStep = ({
-  mood,
-  onMoodChange,
-  error,
-}: {
-  mood: number;
-  onMoodChange: (index: number) => void;
-  error?: string;
-}) => (
-  <div>
-    <h3 className="text-preset-3 text-neutral-900">How was your mood today?</h3>
-    <div className="grid gap-3 mt-8">
-      {MOODS.map(({ mood: moodText, Icon }, index) => (
-        <Mood
-          key={index}
-          mood={moodText}
-          Icon={Icon}
-          isChecked={mood === index}
-          onChange={() => onMoodChange(index)}
-        />
-      ))}
+const MoodStep = () => {
+  const { setMood, data, errors } = useMood();
+  const { mood } = data;
+  const error = errors.mood;
+
+  return (
+    <div>
+      <h3 className="text-preset-3 text-neutral-900">
+        How was your mood today?
+      </h3>
+      <div className="grid gap-3 mt-8">
+        {MOODS.map(({ mood: moodText, Icon, value }, index) => (
+          <Mood
+            key={index}
+            mood={moodText}
+            Icon={Icon}
+            isChecked={mood === value}
+            onChange={() => setMood(value)}
+          />
+        ))}
+      </div>
+      <div className="mt-8">
+        <ErrorMessage message={error} />
+      </div>
     </div>
-    <div className="mt-8">
-      <ErrorMessage message={error} />
-    </div>
-  </div>
-);
+  );
+};
 
 export default MoodStep;

@@ -1,9 +1,12 @@
 import ErrorMessage from "@/components/error-message";
 import Checkbox from "@/components/ui/checkbox";
 
-import feelingsOptions from "@/data/feelings-tags.json";
-import { cn } from "@/utils";
+import { cn } from "@/lib/utils";
 import { memo } from "react";
+import { useMood } from "../../_context/mood-context";
+import { feelingsTags } from "@/data/feelings-tags";
+import { MoodEntrySchemaType } from "@/schemas/mood.entry";
+
 export const MAX_FEELINGS = 3;
 
 const Tag = memo(
@@ -34,15 +37,10 @@ const Tag = memo(
 );
 Tag.displayName = "Tag";
 
-const FeelingsStep = ({
-  feelings,
-  onFeelingsChange,
-  error,
-}: {
-  feelings: string[];
-  onFeelingsChange: (feeling: string) => void;
-  error?: string;
-}) => {
+const FeelingsStep = () => {
+  const { data, setFeelings, errors } = useMood();
+  const { feelings } = data;
+  const error = errors.feelings;
   const canAddMore = feelings.length < MAX_FEELINGS;
 
   return (
@@ -55,13 +53,23 @@ const FeelingsStep = ({
         selected):
       </p>
       <div className="flex flex-wrap gap-3 mt-8">
-        {feelingsOptions.map((feeling) => (
+        {feelingsTags.map((feeling) => (
           <Tag
             key={feeling}
             text={feeling}
-            isChecked={feelings.includes(feeling)}
-            onChange={() => onFeelingsChange(feeling)}
-            disabled={!feelings.includes(feeling) && !canAddMore}
+            isChecked={feelings.includes(
+              feeling.toUpperCase() as MoodEntrySchemaType["feelings"][number]
+            )}
+            onChange={() =>
+              setFeelings(
+                feeling.toUpperCase() as MoodEntrySchemaType["feelings"][number]
+              )
+            }
+            disabled={
+              !feelings.includes(
+                feeling.toUpperCase() as MoodEntrySchemaType["feelings"][number]
+              ) && !canAddMore
+            }
           />
         ))}
       </div>

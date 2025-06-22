@@ -1,13 +1,16 @@
 import ErrorMessage from "@/components/error-message";
 import Radio from "@/components/ui/radio";
-import sleepOptions from "@/data/sleep-options.json";
-import { cn } from "@/utils";
+import { sleepOptions } from "@/data/sleep-options";
+
+import { cn } from "@/lib/utils";
 
 import { memo } from "react";
+import { useMood } from "../../_context/mood-context";
+import { MoodEntrySchemaType } from "@/schemas/mood.entry";
 
 interface SleepOption {
   label: string;
-  value: number;
+  value: MoodEntrySchemaType['sleepHours'];
 }
 
 const SleepOption = memo(
@@ -37,34 +40,31 @@ const SleepOption = memo(
 
 SleepOption.displayName = "SleepOption";
 
-const SleepStep = ({
-  selectedOption,
-  onOptionChange,
-  error,
-}: {
-  selectedOption: number;
-  onOptionChange: (index: number) => void;
-  error?: string;
-}) => (
-  <div>
-    <h3 className="text-preset-3 text-neutral-900">
-      How many hours did you sleep last night?
-    </h3>
-    <div className="grid gap-3 mt-8">
-      {sleepOptions.map((option, index) => (
-        <SleepOption
-          key={index}
-          sleepOption={option}
-          isChecked={selectedOption === index}
-          onChange={() => onOptionChange(index)}
-        />
-      ))}
-    </div>
+const SleepStep = () => {
+  const { data, setSleepHours, errors } = useMood();
+  const { sleepHours } = data;
+  const error = errors.sleepHours;
+  return (
+    <div>
+      <h3 className="text-preset-3 text-neutral-900">
+        How many hours did you sleep last night?
+      </h3>
+      <div className="grid gap-3 mt-8">
+        {sleepOptions.map((option, index) => (
+          <SleepOption
+            key={index}
+            sleepOption={option}
+            isChecked={sleepHours === option.value}
+            onChange={() => setSleepHours(option.value)}
+          />
+        ))}
+      </div>
 
-    <div className="mt-8">
-      <ErrorMessage message={error} />
+      <div className="mt-8">
+        <ErrorMessage message={error} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default SleepStep;

@@ -1,10 +1,11 @@
 "use client";
 import React, { memo, useMemo } from "react";
 import sleep from "@/assets/sleep.svg";
-import sleepOptions from "@/data/sleep-options.json";
+
 import Image from "next/image";
 import { Happy, Neutral, Sad, VeryHappy, VerySad } from "@/components/icons";
-import { cn } from "@/utils";
+import { cn } from "@/lib/utils";
+import { sleepOptions } from "@/data/sleep-options";
 
 interface MoodEntry {
   createdAt: string;
@@ -196,17 +197,15 @@ const Bar: React.FC<BarProps> = memo(({ entry }) => {
 
 Bar.displayName = "Bar";
 
-const SleepOption: React.FC<SleepOptionProps> = memo(
-  ({ option, index }) => (
-    <div key={index} className="flex items-center gap-x-5.5">
-      <div className="flex items-center gap-1.5 text-preset-9 text-neutral-600">
-        <Image src={sleep} alt="Sleep Icon" width={10} height={10} />
-        {option.label}
-      </div>
-      <hr className="text-blue-100 h-[1px] flex-1" />
+const SleepOption: React.FC<SleepOptionProps> = memo(({ option, index }) => (
+  <div key={index} className="flex items-center gap-x-5.5">
+    <div className="flex items-center gap-1.5 text-preset-9 text-neutral-600">
+      <Image src={sleep} alt="Sleep Icon" width={10} height={10} />
+      {option.label}
     </div>
-  )
-);
+    <hr className="text-blue-100 h-[1px] flex-1" />
+  </div>
+));
 
 SleepOption.displayName = "SleepOption";
 
