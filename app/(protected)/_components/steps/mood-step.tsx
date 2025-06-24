@@ -1,23 +1,11 @@
 import ErrorMessage from "@/components/error-message";
-import { Happy, VeryHappy, Neutral, Sad, VerySad } from "@/components/icons";
+
 import Radio from "@/components/ui/radio";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { useMood } from "../../_context/mood-context";
-import { MoodEntrySchemaType } from "@/schemas/mood.entry";
 
-interface MoodOption {
-  mood: string;
-  Icon: React.ComponentType<{ className?: string }>;
-  value: MoodEntrySchemaType["mood"];
-}
-export const MOODS: MoodOption[] = [
-  { mood: "Very Happy", Icon: VeryHappy, value: 2 },
-  { mood: "Happy", Icon: Happy, value: 1 },
-  { mood: "Neutral", Icon: Neutral, value: 0 },
-  { mood: "Sad", Icon: Sad, value: -1 },
-  { mood: "Very Sad", Icon: VerySad, value: -2 },
-];
+import { useLogMoodContext } from "../../_context/log-mood-context";
+import { MOODS_CONFIG } from "../../utils";
 
 const Mood = React.memo(
   ({
@@ -49,7 +37,7 @@ const Mood = React.memo(
 Mood.displayName = "Mood";
 
 const MoodStep = () => {
-  const { setMood, data, errors } = useMood();
+  const { setMood, data, errors } = useLogMoodContext();
   const { mood } = data;
   const error = errors.mood;
 
@@ -59,7 +47,7 @@ const MoodStep = () => {
         How was your mood today?
       </h3>
       <div className="grid gap-3 mt-8">
-        {MOODS.map(({ mood: moodText, Icon, value }, index) => (
+        {MOODS_CONFIG.map(({ moodText, Icon, value }, index) => (
           <Mood
             key={index}
             mood={moodText}

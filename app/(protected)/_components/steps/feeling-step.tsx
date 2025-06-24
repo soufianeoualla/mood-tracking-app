@@ -3,9 +3,11 @@ import Checkbox from "@/components/ui/checkbox";
 
 import { cn } from "@/lib/utils";
 import { memo } from "react";
-import { useMood } from "../../_context/mood-context";
-import { feelingsTags } from "@/data/feelings-tags";
+
+
 import { MoodEntrySchemaType } from "@/schemas/mood.entry";
+import { useLogMoodContext } from "../../_context/log-mood-context";
+import { feelingsTags } from "../../utils";
 
 export const MAX_FEELINGS = 3;
 
@@ -38,7 +40,7 @@ const Tag = memo(
 Tag.displayName = "Tag";
 
 const FeelingsStep = () => {
-  const { data, setFeelings, errors } = useMood();
+  const { data, setFeelings, errors } = useLogMoodContext();
   const { feelings } = data;
   const error = errors.feelings;
   const canAddMore = feelings.length < MAX_FEELINGS;

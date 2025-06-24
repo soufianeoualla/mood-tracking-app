@@ -6,7 +6,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Toaster position="bottom-right" />
-      <ProtectedRoute>{children}</ProtectedRoute>;
+      <ProtectedRoute>{children}</ProtectedRoute>
     </>
   );
 };

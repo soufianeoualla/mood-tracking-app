@@ -24,14 +24,28 @@ export class MoodEntryRepository {
     });
   }
 
-  async getLastEntries(userId: number, limit = 5) {
+  async getLastEntries(userId: number) {
     return await db.moodEntry.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
-      take: limit,
+      take: 10,
     });
   }
 
+  async getEntriesBetweenDates(userId: number, from: Date, to: Date) {
+    return db.moodEntry.findMany({
+      where: {
+        userId,
+        createdAt: {
+          gte: from,
+          lte: to,
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  }
   async getEntryById(id: number) {
     return await db.moodEntry.findUnique({ where: { id } });
   }

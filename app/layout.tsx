@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Reddit_Sans } from "next/font/google";
 import "./globals.css";
+import QueryProvider from "./query-provider";
 
 const redditSans = Reddit_Sans({
   subsets: ["latin"],
@@ -22,7 +23,7 @@ export default function RootLayout({
       <body
         className={`${redditSans.className} antialiased flex flex-col items-center custom-linear-gradiant min-h-screen`}
       >
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

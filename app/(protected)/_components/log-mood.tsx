@@ -9,8 +9,9 @@ import FeelingsStep from "./steps/feeling-step";
 import JournalStep from "./steps/journal-step";
 import SleepStep from "./steps/sleep-step";
 import logMoodService from "../_services/log-mood.service";
-import { useMood } from "../_context/mood-context";
+
 import toast from "react-hot-toast";
+import { useLogMoodContext } from "../_context/log-mood-context";
 
 interface MoodData {
   mood: number;
@@ -85,7 +86,7 @@ const ProgressBar = ({
 // Main component
 const LogMood = ({ hide }: { hide: () => void }) => {
   const [step, setStep] = useState(1);
-  const { data, setErrors, resetData } = useMood();
+  const { data, setErrors, resetData } = useLogMoodContext();
 
   const [isPending, startTransition] = useTransition();
 

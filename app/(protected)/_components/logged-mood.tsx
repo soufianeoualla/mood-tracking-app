@@ -1,20 +1,14 @@
 import React from "react";
-import { MOODS } from "./steps/mood-step";
+
 import quoteIcon from "@/assets/quote.svg";
 import Image from "next/image";
 import sleep from "@/assets/sleep.svg";
 import commentIcon from "@/assets/commentIcon.svg";
 import { Feeling, MoodEntry } from "@prisma/client";
-import { sleepOptions } from "@/data/sleep-options";
 
-export const getMood = (moodvalue: number) => {
-  const mood = MOODS.find((m) => m.value === moodvalue);
-  return mood;
-};
+import { getMoodConfig, getSleepHours, MoodLevel } from "../utils";
 
-export const getSleepHours = (hours: number) => {
-  return sleepOptions.find((o) => o.value === hours) ;
-};
+
 
 const MoodConatainer = ({
   moodText,
@@ -52,7 +46,9 @@ const SleepConatiner = ({ sleepHours }: { sleepHours: number }) => {
         Sleep
       </div>
       <span className="text-neutral-900 text-preset-3">
-        {getSleepHours(sleepHours) ? getSleepHours(sleepHours)?.label : "No data"}
+        {getSleepHours(sleepHours)
+          ? getSleepHours(sleepHours)?.label
+          : "No data"}
       </span>
     </div>
   );
@@ -87,13 +83,13 @@ const CommentContainer = ({
 };
 
 const LoggedMood = ({ moodEntry }: { moodEntry: MoodEntry }) => {
-  const loggedMood = getMood(moodEntry.mood);
+  const loggedMood = getMoodConfig(moodEntry.mood as MoodLevel);
   if (!loggedMood) {
     return <div className="text-red-500">Mood not found</div>;
   }
   return (
     <div className="grid grid-cols-[670px_1fr] gap-x-8 mt-16 mb-8 w-full">
-      <MoodConatainer Icon={loggedMood.Icon} moodText={loggedMood.mood} />
+      <MoodConatainer Icon={loggedMood.Icon} moodText={loggedMood.moodText} />
       <div className="flex flex-col gap-y-5 w-full">
         <SleepConatiner sleepHours={moodEntry.sleepHours} />
         <CommentContainer

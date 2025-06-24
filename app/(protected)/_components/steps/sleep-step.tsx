@@ -1,12 +1,14 @@
 import ErrorMessage from "@/components/error-message";
 import Radio from "@/components/ui/radio";
-import { sleepOptions } from "@/data/sleep-options";
+
 
 import { cn } from "@/lib/utils";
 
 import { memo } from "react";
-import { useMood } from "../../_context/mood-context";
+
 import { MoodEntrySchemaType } from "@/schemas/mood.entry";
+import { useLogMoodContext } from "../../_context/log-mood-context";
+import { sleepOptions } from "../../utils";
 
 interface SleepOption {
   label: string;
@@ -41,7 +43,7 @@ const SleepOption = memo(
 SleepOption.displayName = "SleepOption";
 
 const SleepStep = () => {
-  const { data, setSleepHours, errors } = useMood();
+  const { data, setSleepHours, errors } = useLogMoodContext();
   const { sleepHours } = data;
   const error = errors.sleepHours;
   return (

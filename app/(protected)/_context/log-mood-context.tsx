@@ -23,7 +23,7 @@ interface MoodData {
   sleepHours: MoodEntrySchemaType['sleepHours'];
 }
 
-interface MoodContextType {
+interface LogMoodContextType {
   data: MoodData;
   setMood: (mood: MoodEntrySchemaType["mood"]) => void;
   errors: ValidationErrors;
@@ -34,9 +34,9 @@ interface MoodContextType {
   resetData: () => void;
 }
 
-const MoodContext = createContext<MoodContextType | undefined>(undefined);
+const LogMoodContext = createContext<LogMoodContextType | undefined>(undefined);
 
-const MoodProvider = ({ children }: { children: ReactNode }) => {
+const LogMoodProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<MoodEntrySchemaType>({
     mood: 0,
     feelings: [],
@@ -87,8 +87,11 @@ const MoodProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
+
+
+
   return (
-    <MoodContext.Provider
+    <LogMoodContext.Provider
       value={{
         data,
         setMood,
@@ -101,16 +104,16 @@ const MoodProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-    </MoodContext.Provider>
+    </LogMoodContext.Provider>
   );
 };
 
-const useMood = () => {
-  const context = useContext(MoodContext);
+const useLogMoodContext = () => {
+  const context = useContext(LogMoodContext);
   if (!context) {
-    throw new Error("useMood must be used within a MoodProvider");
+    throw new Error("useLogMood must be used within a LogMoodProvider");
   }
   return context;
 };
 
-export { MoodProvider, useMood };
+export { LogMoodProvider, useLogMoodContext };

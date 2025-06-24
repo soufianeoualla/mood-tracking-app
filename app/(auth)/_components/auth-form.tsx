@@ -6,19 +6,14 @@ import authSchema, { AuthSchemaType } from "@/schemas/auth.schema";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname } from "next/navigation";
-import React, { useState, useTransition } from "react";
+
 import { Controller, useForm } from "react-hook-form";
-import signUpService from "./_services/sign-up.service";
-import loginService from "./_services/login.service";
+
 import FormMessage from "./form-message";
-import useAuthStore from "@/store/useAuthStore";
-import { AxiosError } from "axios";
+
+import { useAuthMutation } from "../_hooks/use-auth-mutations";
 
 const AuthForm = () => {
-  const [successMessage, setSuccessMessage] = useState("");
-  const { setToken, setUser } = useAuthStore();
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isPending, startTransition] = useTransition();
   const form = useForm<AuthSchemaType>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -32,37 +27,16 @@ const AuthForm = () => {
   const pathname = usePathname();
 
   const isLogin = pathname.includes("login");
+  const {
+    mutation,
+    errorMessage,
+    successMessage,
+    setErrorMessage,
+    setSuccessMessage,
+  } = useAuthMutation(isLogin, reset);
 
   const onSubmit = async (data: AuthSchemaType) => {
-    startTransition(async () => {
-      try {
-        if (isLogin) {
-          const response = await loginService(data);
-          setSuccessMessage(response.message);
-          console.log("Login response:", response);
-          setToken(response.token);
-          setUser({
-            id: response.user.id,
-            email: response.user.email,
-            cover: response.user.cover,
-            onboardingComplete: response.user.onboardingComplete,
-          });
-          reset();
-        } else {
-          const response = await signUpService(data);
-          setSuccessMessage(response.message);
-          reset();
-        }
-      } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-          setErrorMessage(
-            error.response?.data || `${isLogin ? "Login" : "Signup"} failed`
-          );
-
-          return;
-        }
-      }
-    });
+    mutation.mutate(data);
   };
 
   return (
@@ -103,7 +77,7 @@ const AuthForm = () => {
       <FormMessage message={successMessage} />
       <FormMessage message={errorMessage} isError />
 
-      <Button className="w-full" disabled={isPending}>
+      <Button className="w-full" disabled={mutation.isPending} type="submit">
         {isLogin ? "Login" : "Sign Up"}
       </Button>
     </form>

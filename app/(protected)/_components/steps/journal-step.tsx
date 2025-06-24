@@ -1,11 +1,12 @@
 import ErrorMessage from "@/components/error-message";
 import { cn } from "@/lib/utils";
-import { useMood } from "../../_context/mood-context";
+import { useLogMoodContext } from "../../_context/log-mood-context";
+
 
 const MAX_JOURNAL_LENGTH = 150;
 
 const JournalStep = () => {
-  const { data, errors, setComment } = useMood();
+  const { data, errors, setComment } = useLogMoodContext();
   const { comment } = data;
   const error = errors.comment;
   return (

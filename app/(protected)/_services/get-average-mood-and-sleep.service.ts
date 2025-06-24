@@ -1,8 +1,8 @@
 import api from "@/config/axiosInstance";
 
-const getAverageMoodAndSleep = async () => {
+const getAverageMoodAndSleepService = async () => {
   const response = await api.get("/mood/average");
   return response.data;
 };
 
-export default getAverageMoodAndSleep;
+export default getAverageMoodAndSleepService;

@@ -3,8 +3,22 @@ import authMiddleware from "./authMiddleware";
 import { zValidator } from "@hono/zod-validator";
 import moodEntrySchema from "@/schemas/mood.entry";
 import { MoodEntryRepository } from "@/prisma/repositories/mood-entry.repository";
+import { MoodEntry } from "@prisma/client";
 
 const moodEntryRepository = new MoodEntryRepository();
+
+const getStartOfToday = () => {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate());
+};
+
+const getAverageSleepHours = (hours: number) => {
+  if (hours <= 3) return 1;
+  if (hours <= 5) return 3.5;
+  if (hours <= 7) return 5.5;
+  if (hours < 9) return 7.5;
+  return 9;
+};
 
 const app = new Hono()
   .post("/", authMiddleware, zValidator("json", moodEntrySchema), async (c) => {
@@ -15,22 +29,18 @@ const app = new Hono()
       if (!user) {
         return c.json({ error: "Unauthorized" }, 401);
       }
+
       if (!moodEntry) {
         return c.json({ error: "Mood entry data is required" }, 400);
       }
-      const { mood, sleepHours, comment, feelings } = moodEntry;
 
-      const today = new Date();
-      const moodEntryDate = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-      );
+      const { mood, sleepHours, comment, feelings } = moodEntry;
+      const moodEntryDate = getStartOfToday();
+
       const existingEntry = await moodEntryRepository.getEntriesByDate(
         user.id,
         moodEntryDate
       );
-
       if (existingEntry.length > 0) {
         return c.json({ error: "Mood entry for today already exists" }, 400);
       }
@@ -41,11 +51,10 @@ const app = new Hono()
             id: user.id,
           },
         },
-
         mood,
         sleepHours,
         comment,
-        feelings: feelings,
+        feelings,
       });
 
       return c.json({
@@ -61,6 +70,7 @@ const app = new Hono()
       return c.json({ error: "Failed to create mood entry" }, 500);
     }
   })
+
   .get("/", authMiddleware, async (c) => {
     try {
       const user = c.get("user");
@@ -68,32 +78,21 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const today = new Date();
-      const moodEntryDate = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-      );
-
+      const moodEntryDate = getStartOfToday();
       const entries = await moodEntryRepository.getEntriesByDate(
         user.id,
         moodEntryDate
       );
 
-      if (entries.length === 0) {
-        return c.json({
-          moodEntry: null,
-        });
-      }
-
       return c.json({
-        moodEntry: entries[0],
+        moodEntry: entries.length > 0 ? entries[0] : null,
       });
     } catch (error) {
       console.error("Error fetching mood entry:", error);
       return c.json({ error: "Failed to fetch mood entry" }, 500);
     }
   })
+
   .get("/average", authMiddleware, async (c) => {
     try {
       const user = c.get("user");
@@ -106,37 +105,110 @@ const app = new Hono()
         return c.json({ averageMood: null });
       }
 
-      const totalMood = entries.reduce((sum, entry) => sum + entry.mood, 0);
-      const totalSleepHours = entries.reduce(
-        (sum, entry) => sum + entry.sleepHours,
-        0
-      );
-      const averageMood = totalMood / entries.length;
-      let averageSleepHours = totalSleepHours / entries.length;
+      const calcAverages = (
+        entries: Array<{ mood: number; sleepHours: number }>
+      ) => {
+        const moodSum = entries.reduce((sum, e) => sum + e.mood, 0);
+        const sleepSum = entries.reduce((sum, e) => sum + e.sleepHours, 0);
+        return {
+          mood: moodSum / entries.length,
+          sleep: getAverageSleepHours(sleepSum / entries.length),
+        };
+      };
 
-      if (0 < averageSleepHours && averageSleepHours <= 3) {
-        averageSleepHours = 1;
+      if (entries.length > 5) {
+        const latestEntries = entries.slice(0, 5);
+        const previousEntries = entries.slice(5);
+
+        const latestAvg = calcAverages(latestEntries);
+        const previousAvg = calcAverages(previousEntries);
+
+        const moodStatus =
+          latestAvg.mood > previousAvg.mood
+            ? "up"
+            : latestAvg.mood < previousAvg.mood
+            ? "down"
+            : "same";
+
+        const sleepStatus =
+          latestAvg.sleep > previousAvg.sleep
+            ? "up"
+            : latestAvg.sleep < previousAvg.sleep
+            ? "down"
+            : "same";
+
+        return c.json({
+          averageMood: Math.round(latestAvg.mood),
+          averageSleepHours: latestAvg.sleep,
+          moodStatus,
+          sleepStatus,
+        });
       }
-      if (3 < averageSleepHours && averageSleepHours <= 5) {
-        averageSleepHours = 3.5;
+      if (entries.length < 5) {
+        return c.json({
+          averageMood: null,
+          averageSleepHours: null,
+          moodStatus: null,
+          sleepStatus: null,
+        });
       }
-      if (5 < averageSleepHours && averageSleepHours <= 7) {
-        averageSleepHours = 5.5;
-      }
-      if (7 < averageSleepHours && averageSleepHours < 9) {
-        averageSleepHours = 7.5;
-      }
-      if (averageSleepHours === 9) {
-        averageSleepHours = 9;
-      }
+
+      const { mood, sleep } = calcAverages(entries);
 
       return c.json({
-        averageMood: Math.round(averageMood),
-        averageSleepHours,
+        averageMood: Math.round(mood),
+        averageSleepHours: sleep,
+        moodStatus: null,
+        sleepStatus: null,
       });
     } catch (error) {
       console.error("Error fetching average mood:", error);
       return c.json({ error: "Failed to fetch average mood" }, 500);
+    }
+  })
+  .get("/chart", authMiddleware, async (c) => {
+    try {
+      const user = c.get("user");
+      if (!user) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const today = new Date();
+      const startDate = new Date();
+      startDate.setDate(today.getDate() - 10);
+
+      const entries = await moodEntryRepository.getEntriesBetweenDates(
+        user.id,
+        startDate,
+        today
+      );
+
+      const entryMap = new Map<string, MoodEntry>();
+
+      entries.forEach((entry: MoodEntry) => {
+        const dateStr = entry.createdAt.toISOString().split("T")[0];
+        entryMap.set(dateStr, {
+          ...entry,
+        });
+      });
+
+      const chartData = [];
+      for (let i = 0; i < 11; i++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+        const dateStr = date.toISOString().split("T")[0];
+
+        const data = entryMap.get(dateStr);
+        chartData.push({
+          date: dateStr,
+          entry: data ? data : null,
+        });
+      }
+
+      return c.json({ chartData });
+    } catch (error) {
+      console.error("Error fetching chart data:", error);
+      return c.json({ error: "Failed to fetch chart data" }, 500);
     }
   });
 

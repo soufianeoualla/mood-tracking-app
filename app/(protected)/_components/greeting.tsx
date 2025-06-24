@@ -2,68 +2,41 @@
 
 import Button from "@/components/ui/button";
 import Modal from "@/components/ui/modal";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import LogMood from "./log-mood";
 import useAuthStore from "@/store/useAuthStore";
 import { format } from "date-fns";
-import { MoodProvider } from "../_context/mood-context";
-import getCurrentMoodService from "../_services/get-current-mood.service";
 import LoggedMood from "./logged-mood";
-import { MoodEntry } from "@prisma/client";
-import { Loader2 } from "lucide-react";
+import { LogMoodProvider } from "../_context/log-mood-context";
+import { useMoodContext } from "../_context/use-mood";
+
 const Greeting = () => {
   const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
+  const { currentMoodEntry, refetch } = useMoodContext();
   const { user } = useAuthStore();
   const firstName = user?.name?.split(" ")[0];
   const today = new Date();
   const formattedDay = format(today, "EEEE, MMMM do, yyyy");
 
-  const fetchCurrentMood = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getCurrentMoodService();
-      setIsLoading(false);
-      if (!data) return;
-      setMoodEntry(data.moodEntry);
-    } catch (error) {
-      console.error("Error fetching current mood:", error);
-      setMoodEntry(null);
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCurrentMood();
-  }, []);
-
-  if (isLoading)
-    return (
-      <div className="h-[340px] mt-16 mb-8 flex justify-center items-center">
-        <Loader2 className="animate-spin w-10 h-10 text-blue-600" />
-      </div>
-    );
-
   const renderMoodContent = () => {
-    if (!!moodEntry) {
-      return <LoggedMood moodEntry={moodEntry} />;
+    if (!!currentMoodEntry) {
+      return <LoggedMood moodEntry={currentMoodEntry} />;
     } else {
       return (
         <>
           <Button onClick={() => setShowModal(true)} className="my-16">
             Log today&apos;s mood
           </Button>
-          <MoodProvider>
+          <LogMoodProvider>
             <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
               <LogMood
                 hide={() => {
                   setShowModal(false);
-                  fetchCurrentMood();
+                  refetch();
                 }}
               />
             </Modal>
-          </MoodProvider>
+          </LogMoodProvider>
         </>
       );
     }
