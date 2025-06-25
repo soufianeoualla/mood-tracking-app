@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 import WelcomeTemplate from "@/components/welcome-email";
 import ResetPassword from "@/components/reset-password-email";
-const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 const domain = process.env.NEXT_PUBLIC_APP_URL;
 
 export const sendVerificationEmail = async (

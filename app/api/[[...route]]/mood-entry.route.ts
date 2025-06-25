@@ -35,7 +35,7 @@ const getAverageSleepHours = (hours: number) => {
   return 9;
 };
 
-const gemini = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
+const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export const generateMoodQuote = async (entry: {
   mood: number;
