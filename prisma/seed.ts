@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Feeling, PrismaClient } from "@prisma/client";
 import { subDays } from "date-fns";
 
 const prisma = new PrismaClient();
@@ -37,7 +37,7 @@ async function seedMoodEntries(userId: number) {
         comment: `Feeling something on day ${
           i + 1
         }. Just keeping track of my mood.`,
-        feelings: getRandomFeelings(),
+        feelings: getRandomFeelings() as Feeling[],
         createdAt: date,
         updatedAt: date,
       },
