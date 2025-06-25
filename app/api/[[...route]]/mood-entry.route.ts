@@ -5,6 +5,21 @@ import moodEntrySchema from "@/schemas/mood.entry";
 import { MoodEntryRepository } from "@/prisma/repositories/mood-entry.repository";
 import { MoodEntry } from "@prisma/client";
 
+import { GoogleGenerativeAI } from "@google/generative-ai";
+const generateQuotePrompt = ({
+  mood,
+  sleepHours,
+  feelings,
+}: {
+  mood: number;
+  sleepHours: number;
+  feelings: string[];
+}) => {
+  return `Give a short, inspiring quote for someone who is feeling mood level ${mood} (where -2 = very sad, -1 = sad, 0 = neutral, 1 = happy, 2 = very happy), slept ${sleepHours} hours, and feels ${feelings.join(
+    ", "
+  )}.`;
+};
+
 const moodEntryRepository = new MoodEntryRepository();
 
 const getStartOfToday = () => {
@@ -18,6 +33,36 @@ const getAverageSleepHours = (hours: number) => {
   if (hours <= 7) return 5.5;
   if (hours < 9) return 7.5;
   return 9;
+};
+
+const gemini = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
+
+export const generateMoodQuote = async (entry: {
+  mood: number;
+  sleepHours: number;
+  feelings: string[];
+}) => {
+  const prompt = generateQuotePrompt(entry);
+
+  try {
+    const model = gemini.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // Make the API call to Gemini
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
+        maxOutputTokens: 60, // Set maximum output tokens
+        temperature: 0.8, // Set generation temperature
+      },
+    });
+
+    const response = await result.response;
+    return response.text();
+  } catch (error) {
+    console.error("Error generating quote with Gemini:", error);
+
+    return "Keep moving forward, one step at a time.";
+  }
 };
 
 const app = new Hono()
@@ -45,6 +90,12 @@ const app = new Hono()
         return c.json({ error: "Mood entry for today already exists" }, 400);
       }
 
+      const generatedQuote = await generateMoodQuote({
+        mood,
+        sleepHours,
+        feelings,
+      });
+
       await moodEntryRepository.createEntry({
         user: {
           connect: {
@@ -55,6 +106,7 @@ const app = new Hono()
         sleepHours,
         comment,
         feelings,
+        generatedQuote,
       });
 
       return c.json({

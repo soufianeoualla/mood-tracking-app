@@ -1,10 +1,13 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { HTTPException } from "hono/http-exception";
-import authSchema from "@/schemas/auth.schema";
+import authSchema, { passwordResetSchema } from "@/schemas/auth.schema";
 import bcrypt from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { UserRepository } from "@/prisma/repositories/user.repository";
+import { z } from "zod";
+import { generateResetToken, generateVerificationToken } from "@/lib/tokens";
+import { sendResetLinkEmail, sendVerificationEmail } from "@/lib/send-email";
 
 const userRepository = new UserRepository();
 
@@ -76,6 +79,11 @@ const app = new Hono()
         email,
         password: hashedPassword,
       });
+
+      const verificationToken = await generateVerificationToken(email);
+
+      await sendVerificationEmail(email, verificationToken.token);
+
       return c.json({
         message: "Check your email for confirmation!",
         user: newUser,
@@ -89,6 +97,116 @@ const app = new Hono()
         message: "Registration failed",
       });
     }
-  });
+  })
+  .post(
+    "/verify",
+    zValidator(
+      "json",
+      z.object({
+        token: z.string().min(1, "Token is required"),
+      })
+    ),
+    async (c) => {
+      try {
+        const { token } = c.req.valid("json");
+        if (!token) {
+          throw new HTTPException(400, {
+            message: "Token is required",
+          });
+        }
+        const existingToken = await userRepository.getVerificationToken(token);
+        if (!existingToken) {
+          throw new HTTPException(400, {
+            message: "Invalid or expired token",
+          });
+        }
+        const user = await userRepository.getUserByEmail(existingToken.email);
+        if (!user) {
+          throw new HTTPException(404, {
+            message: "User not found",
+          });
+        }
+        const updatedUser = await userRepository.updateUser(user.id, {
+          emailVerified: new Date(),
+        });
+        return c.json({ updatedUser, message: "User verified successfully" });
+      } catch (error) {
+        console.error("Error verifying user:", error);
+        if (error instanceof HTTPException) {
+          throw error;
+        }
+        throw new HTTPException(500, {
+          message: "Verification failed",
+        });
+      }
+    }
+  )
+  .post(
+    "/forgot-password",
+    zValidator(
+      "json",
+      z.object({
+        email: z.string().email("Invalid email address"),
+      })
+    ),
+    async (c) => {
+      try {
+        const { email } = c.req.valid("json");
+        const user = await userRepository.getUserByEmail(email);
+        if (!user) {
+          throw new HTTPException(404, {
+            message: "User not found",
+          });
+        }
+        const resetToken = await generateResetToken(email);
+        await sendResetLinkEmail(email, user.name ?? "", resetToken.token);
+        return c.json({
+          message: "Check your email for password reset instructions!",
+        });
+      } catch (error) {
+        console.error("Error processing forgot password:", error);
+        if (error instanceof HTTPException) {
+          throw error;
+        }
+        throw new HTTPException(500, {
+          message: "Failed to process forgot password",
+        });
+      }
+    }
+  )
+  .post(
+    "/reset-password",
+    zValidator("json", passwordResetSchema),
+    async (c) => {
+      try {
+        const { token, newPassword } = c.req.valid("json");
+        const existingToken = await userRepository.getResetToken(token);
+        if (!existingToken) {
+          throw new HTTPException(400, {
+            message: "Invalid or expired reset token",
+          });
+        }
+        const user = await userRepository.getUserByEmail(existingToken.email);
+        if (!user) {
+          throw new HTTPException(404, {
+            message: "User not found",
+          });
+        }
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
+        await userRepository.updateUser(user.id, {
+          password: hashedPassword,
+        });
+        await userRepository.deleteResetToken(token);
+      } catch (error) {
+        console.error("Error resetting password:", error);
+        if (error instanceof HTTPException) {
+          throw error;
+        }
+        throw new HTTPException(500, {
+          message: "Failed to reset password",
+        });
+      }
+    }
+  );
 
 export default app;

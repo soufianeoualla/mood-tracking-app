@@ -1,4 +1,3 @@
-
 import useAuthStore from "@/store/useAuthStore";
 import axios, { AxiosError } from "axios";
 
@@ -24,13 +23,8 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const status = error.response?.status;
-    const data = error.response?.data as { error?: string } | undefined;
 
-    if (
-      data?.error === "SESSION_EXPIRED" ||
-      data?.error === "UNAUTHORIZED" ||
-      status === 403
-    ) {
+    if (status === 401) {
       useAuthStore.getState().clearAuth();
     }
 

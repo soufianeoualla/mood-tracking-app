@@ -69,7 +69,7 @@ const Popover = ({ entry, bottom }: { entry: MoodEntry; bottom: boolean }) => {
 
       <div className="flex flex-col gap-y-2 mb-3">
         <span className="text-neutral-600 text-preset-8">Reflection</span>
-        <p className="text-neutral-900 text-preset-9">{entry.comment}</p>
+        <p className="text-neutral-900 text-preset-9 text-wrap">{entry.comment}</p>
       </div>
 
       <div className="flex flex-col gap-y-2 ">

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import authMiddleware from "./authMiddleware";
 import { zValidator } from "@hono/zod-validator";
-import onboardingSchema from "@/schemas/onboarding.schema";
+import profileSchema from "@/schemas/profile.schema";
 import { HTTPException } from "hono/http-exception";
 import { UserRepository } from "@/prisma/repositories/user.repository";
 
@@ -10,7 +10,7 @@ const userRepository = new UserRepository();
 const app = new Hono().post(
   "/",
   authMiddleware,
-  zValidator("json", onboardingSchema),
+  zValidator("json", profileSchema),
   async (c) => {
     try {
       const user = c.get("user");

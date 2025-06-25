@@ -11,7 +11,26 @@ import { getMoodConfig, getSleepHours, MoodLevel } from "../utils";
 
 const AverageMoodCard = () => {
   const { averageData } = useMoodContext();
-  const mood = averageData?.averageMood ?? 0;
+  const mood = averageData?.averageMood;
+
+  if (!mood)
+    return (
+      <div className="p-5 rounded-[20px] flex flex-col gap-y-3 bg-blue-100 justify-center items-start h-full relative ">
+        <Image
+          src={pattern}
+          alt="Pattern"
+          className="absolute top-0 right-0 w-auto h-full "
+        />
+
+        <div className="flex flex-col items-start gap-y-3">
+          <h4 className="text-neutral-900 text-preset-4">Keep tracking! </h4>
+          <p className="text-neutral-600 text-preset-7">
+            Log 5 check-ins to see your average mood.
+          </p>
+        </div>
+      </div>
+    );
+
   const status = averageData?.moodStatus ?? null;
 
   const { Icon, color: moodColor, moodText } = getMoodConfig(mood as MoodLevel);
@@ -20,7 +39,7 @@ const AverageMoodCard = () => {
     <div
       className={cn(
         "p-5 rounded-[20px] flex flex-col gap-y-3 justify-center items-start h-full relative ",
-        moodColor
+        averageData?.averageMood ? moodColor : "bg-blue-100"
       )}
     >
       <Image
@@ -28,76 +47,41 @@ const AverageMoodCard = () => {
         alt="Pattern"
         className="absolute top-0 right-0 w-auto h-full "
       />
-      {averageData?.averageMood && (
-        <>
-          <div className="flex items-center gap-x-4">
-            <Icon isWhite width={24} height={24} />
-            <h4 className="text-preset-4 text-neutral-900">{moodText}</h4>
-          </div>
-          <div className="flex items-center gap-x-2 text-neutral-900 text-preset-7">
-            <ArrowRight
-              className={cn(
-                status === "up" && "-rotate-45",
-                status === "down" && "rotate-45"
-              )}
-            />
-            <span>
-              {status === "same" && "Same as the previous 5 check-ins"}
-              {status === "up" && "Better than the previous 5 check-ins"}
-              {status === "down" && "Worse than the previous 5 check-ins"}
-              {status === null && "No data"}
-            </span>
-          </div>
-        </>
-      )}
-      {!averageData?.averageMood && (
-        <div className="flex flex-col items-start gap-y-3">
-          <h4 className="text-neutral-900 text-preset-4">Keep tracking! </h4>
-          <p className="text-neutral-600 text-preset-7">
-            Log 5 check-ins to see your average mood.
-          </p>
-        </div>
-      )}
+
+      <div className="flex items-center gap-x-4">
+        <Icon isWhite width={24} height={24} />
+        <h4 className="text-preset-4 text-neutral-900">{moodText}</h4>
+      </div>
+      <div className="flex items-center gap-x-2 text-neutral-900 text-preset-7">
+        <ArrowRight
+          className={cn(
+            status === "up" && "-rotate-45",
+            status === "down" && "rotate-45"
+          )}
+        />
+        <span>
+          {status === "same" && "Same as the previous 5 check-ins"}
+          {status === "up" && "Better than the previous 5 check-ins"}
+          {status === "down" && "Worse than the previous 5 check-ins"}
+          {status === null && "No data"}
+        </span>
+      </div>
     </div>
   );
 };
 
 const AverageSleepCard = () => {
   const { averageData } = useMoodContext();
-  const sleepHours = getSleepHours(averageData?.averageSleepHours);
-  const status = averageData?.sleepStatus ?? null;
-  return (
-    <div className="p-5 rounded-[20px] text-white bg-blue-600 flex flex-col gap-y-3 justify-center items-start h-full relative">
-      <Image
-        src={pattern}
-        alt="Pattern"
-        className="absolute top-0 right-0 w-auto h-full "
-      />
-      {averageData?.averageSleepHours && (
-        <>
-          <div className="flex items-center gap-x-4">
-            <h4 className="text-preset-4">
-              {sleepHours?.label ? `${sleepHours.label}` : "No data"}
-            </h4>
-          </div>
-          <div className="flex items-center gap-x-2 text-neutral-0 text-preset-7">
-            <ArrowRight
-              className={cn(
-                status === "up" && "-rotate-45",
-                status === "down" && "rotate-45"
-              )}
-            />
-            <span>
-              {status === "same" && "Same as the previous 5 check-ins"}
-              {status === "up" && "Better than the previous 5 check-ins"}
-              {status === "down" && "Worse than the previous 5 check-ins"}
-              {status === null && "No data of the previous 5 check-ins"}
-            </span>
-          </div>
-        </>
-      )}
 
-      {!averageData?.averageSleepHours && (
+  if (!averageData?.averageSleepHours)
+    return (
+      <div className="p-5 rounded-[20px] text-white  flex bg-blue-100 flex-col gap-y-3 justify-center items-start h-full relative">
+        <Image
+          src={pattern}
+          alt="Pattern"
+          className="absolute top-0 right-0 w-auto h-full "
+        />
+
         <div className="flex flex-col items-start gap-y-3">
           <h4 className="text-neutral-900 text-preset-4">
             Not enough data yet!{" "}
@@ -106,7 +90,38 @@ const AverageSleepCard = () => {
             Track 5 nights to view average sleep.
           </p>
         </div>
-      )}
+      </div>
+    );
+
+  const sleepHours = getSleepHours(averageData?.averageSleepHours);
+  const status = averageData?.sleepStatus ?? null;
+  return (
+    <div className="p-5 rounded-[20px] text-white bg-blue-600  flex flex-col gap-y-3 justify-center items-start h-full relative">
+      <Image
+        src={pattern}
+        alt="Pattern"
+        className="absolute top-0 right-0 w-auto h-full "
+      />
+
+      <div className="flex items-center gap-x-4">
+        <h4 className="text-preset-4">
+          {sleepHours?.label ? `${sleepHours.label}` : "No data"}
+        </h4>
+      </div>
+      <div className="flex items-center gap-x-2 text-neutral-0 text-preset-7">
+        <ArrowRight
+          className={cn(
+            status === "up" && "-rotate-45",
+            status === "down" && "rotate-45"
+          )}
+        />
+        <span>
+          {status === "same" && "Same as the previous 5 check-ins"}
+          {status === "up" && "Better than the previous 5 check-ins"}
+          {status === "down" && "Worse than the previous 5 check-ins"}
+          {status === null && "No data of the previous 5 check-ins"}
+        </span>
+      </div>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { handle } from "hono/vercel";
 import auth from "@/app/api/[[...route]]/auth.route";
 import moodEntry from "@/app/api/[[...route]]/mood-entry.route";
 import onbording from "@/app/api/[[...route]]/onboarding.route";
+import profile from "@/app/api/[[...route]]/profile.route";
 
 const app = new Hono().basePath("/api");
 
@@ -10,7 +11,8 @@ const app = new Hono().basePath("/api");
 const routes = app
   .route("/auth", auth)
   .route("/mood", moodEntry)
-  .route("/onboarding", onbording);
+  .route("/onboarding", onbording)
+  .route("/profile", profile);
 
 export const GET = handle(app);
 export const POST = handle(app);

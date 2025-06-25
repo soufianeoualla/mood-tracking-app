@@ -2,7 +2,7 @@ import Button from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 
-import React, { useState, useCallback, useMemo, useTransition } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { ChevronLeft } from "lucide-react";
 import MoodStep from "./steps/mood-step";
 import FeelingsStep from "./steps/feeling-step";
@@ -12,6 +12,7 @@ import logMoodService from "../_services/log-mood.service";
 
 import toast from "react-hot-toast";
 import { useLogMoodContext } from "../_context/log-mood-context";
+import { useMutation } from "@tanstack/react-query";
 
 interface MoodData {
   mood: number;
@@ -88,7 +89,18 @@ const LogMood = ({ hide }: { hide: () => void }) => {
   const [step, setStep] = useState(1);
   const { data, setErrors, resetData } = useLogMoodContext();
 
-  const [isPending, startTransition] = useTransition();
+  const { mutate, isPending } = useMutation({
+    mutationFn: logMoodService,
+    onSuccess: () => {
+      toast.success("Mood logged successfully!");
+      resetData();
+      hide();
+    },
+    onError: (error) => {
+      console.error("Error submitting mood data:", error);
+      toast.error("Failed to log mood. Please try again.");
+    },
+  });
 
   const handleNext = useCallback(async () => {
     const stepErrors = validateStep(step, data);
@@ -103,19 +115,10 @@ const LogMood = ({ hide }: { hide: () => void }) => {
     if (step < 4) {
       setStep((prev) => prev + 1);
     } else {
-      startTransition(async () => {
-        try {
-          await logMoodService(data);
-          toast.success("Mood logged successfully!");
-          resetData();
-
-          hide();
-        } catch (error) {
-          console.error("Error submitting mood data:", error);
-        }
-      });
+      mutate(data);
+      return;
     }
-  }, [step, data, setErrors, resetData, hide]);
+  }, [step, data, setErrors, mutate]);
 
   const currentStepComponent = useMemo(() => {
     switch (step) {

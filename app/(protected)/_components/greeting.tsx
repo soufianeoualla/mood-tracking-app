@@ -20,7 +20,7 @@ const Greeting = () => {
 
   const renderMoodContent = () => {
     if (!!currentMoodEntry) {
-      return <LoggedMood moodEntry={currentMoodEntry} />;
+      return <LoggedMood />;
     } else {
       return (
         <>

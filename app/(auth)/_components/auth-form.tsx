@@ -12,6 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import FormMessage from "./form-message";
 
 import { useAuthMutation } from "../_hooks/use-auth-mutations";
+import Link from "next/link";
 
 const AuthForm = () => {
   const form = useForm<AuthSchemaType>({
@@ -59,7 +60,7 @@ const AuthForm = () => {
           )}
         />
       </div>
-      <div className="flex flex-col gap-y-2 mt-5 mb-8">
+      <div className="flex flex-col gap-y-2 mt-5 ">
         <Label htmlFor="password">password</Label>
         <Controller
           control={control}
@@ -74,6 +75,17 @@ const AuthForm = () => {
           )}
         />
       </div>
+      {isLogin && (
+        <div className=" my-4 flex justify-end">
+
+        <Link
+          href={"/forgot-password"}
+          className="text-blue-600 text-preset-7 hover:underline"
+          >
+          Forgot your password?
+        </Link>
+          </div>
+      )}
       <FormMessage message={successMessage} />
       <FormMessage message={errorMessage} isError />
 
