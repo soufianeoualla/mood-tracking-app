@@ -21,7 +21,7 @@ const Page = () => {
       toast.success("Email verified successfully!");
       setTimeout(() => {
         router.push("/login");
-      }, 4000);
+      }, 2000);
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {

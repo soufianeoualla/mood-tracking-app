@@ -30,6 +30,16 @@ const app = new Hono()
         });
       }
 
+      if (!user.emailVerified) {
+        const verificationToken = await generateVerificationToken(email);
+
+        await sendVerificationEmail(email, verificationToken.token);
+
+        throw new HTTPException(403, {
+          message: "Email not verified - check your email for confirmation!",
+        });
+      }
+
       const token = sign(
         {
           id: user.id,
@@ -129,6 +139,7 @@ const app = new Hono()
         const updatedUser = await userRepository.updateUser(user.id, {
           emailVerified: new Date(),
         });
+        await userRepository.deleteVerificationToken(token);
         return c.json({ updatedUser, message: "User verified successfully" });
       } catch (error) {
         console.error("Error verifying user:", error);
@@ -196,7 +207,11 @@ const app = new Hono()
         await userRepository.updateUser(user.id, {
           password: hashedPassword,
         });
+
         await userRepository.deleteResetToken(token);
+        return c.json({
+          message: "Password reset successfully",
+        });
       } catch (error) {
         console.error("Error resetting password:", error);
         if (error instanceof HTTPException) {

@@ -74,7 +74,7 @@ const AuthPageGuard = ({ children }: { children?: React.ReactNode }) => {
   }, [isInitialized, user, router]);
 
   if (isLoading || !isInitialized) {
-    return <div>Loading...</div>;
+    return <Loader/>
   }
 
   if (user) {

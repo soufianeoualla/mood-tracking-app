@@ -8,7 +8,7 @@ import {
   passwordResetSchema,
   PasswordResetSchemaType,
 } from "@/schemas/auth.schema";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangleIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import resetPasswordService from "./_services/reset-password.service";
@@ -18,6 +18,7 @@ import { AxiosError } from "axios";
 const Page = () => {
   const params = useSearchParams();
   const token = params.get("token");
+  const router = useRouter();
   const {
     control,
     handleSubmit,
@@ -37,6 +38,9 @@ const Page = () => {
     onSuccess: () => {
       toast.success("Password reset successfully!");
       reset();
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {

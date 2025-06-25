@@ -75,8 +75,8 @@ const AuthForm = () => {
           )}
         />
       </div>
-      {isLogin && (
         <div className=" my-4 flex justify-end">
+      {isLogin && (
 
         <Link
           href={"/forgot-password"}
@@ -84,8 +84,8 @@ const AuthForm = () => {
           >
           Forgot your password?
         </Link>
-          </div>
       )}
+          </div>
       <FormMessage message={successMessage} />
       <FormMessage message={errorMessage} isError />
 

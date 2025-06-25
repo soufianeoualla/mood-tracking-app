@@ -22,7 +22,10 @@ const app = new Hono().patch(
       if (!existingUser) {
         return c.json({ error: "User not found" }, 404);
       }
-      const updatedUser = await userRepository.updateUser(user.id, profileData);
+      const updatedUser = await userRepository.updateUser(user.id, {
+        ...profileData,
+        name: profileData.name.toLowerCase(),
+      });
 
       return c.json({ user: updatedUser }, 200);
     } catch (error) {

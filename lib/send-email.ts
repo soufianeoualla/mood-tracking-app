@@ -24,7 +24,7 @@ export const sendResetLinkEmail = async (
   name: string,
   token: string
 ) => {
-  const link = `${domain}/auth/reset-password?token=${token}`;
+  const link = `${domain}/reset-password?token=${token}`;
 
   await resend.emails.send({
     from: "Reset Password <mood@soufian.me>",

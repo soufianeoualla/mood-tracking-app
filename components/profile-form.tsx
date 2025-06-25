@@ -140,7 +140,7 @@ const UserProfileForm = ({
             )}
           />
           {errors.name && (
-            <p className="text-red-500 text-sm">{errors.name.message}</p>
+            <p className="text-red-700 text-preset-8 font-medium">* {errors.name.message}</p>
           )}
         </div>
 
