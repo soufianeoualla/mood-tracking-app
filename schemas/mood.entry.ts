@@ -1,4 +1,5 @@
-import { Feeling } from "@/app/generated/prisma";
+
+import { Feeling } from "@prisma/client";
 import { z } from "zod";
 
 const moodEntrySchema = z.object({
