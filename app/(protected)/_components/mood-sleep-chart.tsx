@@ -172,7 +172,7 @@ const ChartEntry = ({
 const MoodSleepChart = () => {
   const { moodEntries } = useMoodContext();
   return (
-    <div className="bg-neutral-0 rounded-[10px] p-4 md:p-8 border border-blue-100  ">
+    <div className="bg-neutral-0 rounded-[10px] p-4 md:p-8 border border-blue-100  overflow-hidden">
       <h3 className="text-preset-3-mobile md:text-preset-3 text-neutral-900">
         Mood and sleep trends
       </h3>
