@@ -38,7 +38,7 @@ const AverageMoodCard = () => {
   return (
     <div
       className={cn(
-        "p-5 h-[150px] md:h-full  flex flex-col gap-y-3 justify-center items-start relative ",
+        "p-5 h-[150px] rounded-[20px] md:h-full  flex flex-col gap-y-3 justify-center items-start relative ",
         averageData?.averageMood ? moodColor : "bg-blue-100"
       )}
     >

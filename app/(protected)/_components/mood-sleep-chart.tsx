@@ -16,14 +16,9 @@ import {
   sleepOptions,
 } from "../utils";
 
-interface SleepOption {
-  label: string;
-  value?: number;
-}
-
 type SleepHours = 1 | 3.5 | 5.5 | 7.5 | 9;
 
-const LEVEL = 53;
+const LEVEL = 52.1;
 const BASE_HEIGHT = 50;
 
 const SLEEP_HEIGHT_MAP: Record<SleepHours, number> = {
@@ -38,7 +33,15 @@ const getBarHeight = (sleepHours: SleepHours): number => {
   return SLEEP_HEIGHT_MAP[sleepHours] || 0;
 };
 
-const Popover = ({ entry, bottom }: { entry: MoodEntry; bottom: boolean }) => {
+const Popover = ({
+  entry,
+  bottom,
+  right,
+}: {
+  entry: MoodEntry;
+  bottom: boolean;
+  right: boolean;
+}) => {
   const { Icon, moodText } = getMoodConfig(entry.mood as MoodLevel);
   const sleepHours = getSleepHours(entry.sleepHours as SleepHours);
   const feelings = entry.feelings.map((feeling) => feeling.toLowerCase());
@@ -46,8 +49,9 @@ const Popover = ({ entry, bottom }: { entry: MoodEntry; bottom: boolean }) => {
   return (
     <div
       className={cn(
-        "bg-neutral-0 rounded-[10px] p-3 border border-blue-100 shadow-lg absolute -left-45 w-[175px] ",
-        bottom ? "bottom-0" : "top-0"
+        "bg-neutral-0 rounded-[10px] z-[100] p-3 border border-blue-100 shadow-lg absolute w-[175px] ",
+        bottom ? "bottom-0" : "top-0",
+        right ? "-right-45" : "-left-45"
       )}
     >
       <div className="flex flex-col gap-y-2 mb-3">
@@ -86,7 +90,7 @@ const Popover = ({ entry, bottom }: { entry: MoodEntry; bottom: boolean }) => {
   );
 };
 
-const Bar = ({ entry }: { entry: MoodEntry }) => {
+const Bar = ({ entry, index }: { entry: MoodEntry; index: number }) => {
   const [showPopover, setShowPopover] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -114,7 +118,13 @@ const Bar = ({ entry }: { entry: MoodEntry }) => {
 
   return (
     <div className="w-full absolute bottom-[50px]">
-      {showPopover && <Popover entry={entry} bottom={barHeight === 0} />}
+      {showPopover && (
+        <Popover
+          entry={entry}
+          bottom={barHeight <= LEVEL * 2}
+          right={index <= 3}
+        />
+      )}
 
       <div
         ref={dropdownRef}
@@ -132,22 +142,6 @@ const Bar = ({ entry }: { entry: MoodEntry }) => {
     </div>
   );
 };
-
-const SleepOption = ({
-  option,
-  index,
-}: {
-  option: SleepOption;
-  index: number;
-}) => (
-  <div key={index} className="flex items-center gap-x-5.5">
-    <div className="flex items-center gap-1.5 text-preset-9 text-neutral-600">
-      <Image src={sleep} alt="Sleep Icon" width={10} />
-      {option.label}
-    </div>
-    <hr className="text-blue-100 h-[1px] flex-1" />
-  </div>
-);
 
 const ChartEntry = ({
   entry,
@@ -170,7 +164,7 @@ const ChartEntry = ({
         <span className="text-preset-9 text-neutral-600">{month}</span>
         {day}
       </div>
-      <Bar entry={entry} />
+      <Bar entry={entry} index={index} />
     </div>
   );
 };
@@ -178,26 +172,46 @@ const ChartEntry = ({
 const MoodSleepChart = () => {
   const { moodEntries } = useMoodContext();
   return (
-    <div className="bg-neutral-0 rounded-[10px] p-4 md:p-8 border border-blue-100  overflow-x-auto scrollbar-hide">
+    <div className="bg-neutral-0 rounded-[10px] p-4 md:p-8 border border-blue-100  ">
       <h3 className="text-preset-3-mobile md:text-preset-3 text-neutral-900">
         Mood and sleep trends
       </h3>
+      <div className="mt-8 flex items-start gap-x-5">
+        <div className=" flex flex-col gap-y-10 ">
+          {sleepOptions.map((option, index) => (
+            <div
+              className="flex items-center gap-1.5 text-preset-9 text-neutral-600 w-[70px]"
+              key={index}
+            >
+              <Image src={sleep} alt="Sleep Icon" width={10} />
+              {option.label}
+            </div>
+          ))}
+        </div>
 
-      <div className="flex flex-col gap-y-10 w-full mt-8" role="list">
-        {sleepOptions.map((option, index) => (
-          <SleepOption key={index} option={option} index={index} />
-        ))}
-      </div>
-
-      <div className="pl-21 flex items-center gap-x-3.5 mt-[61px] ">
-        {moodEntries?.map((item, idx) => (
-          <ChartEntry
-            key={`${item.date}-${idx}`}
-            entry={item.entry}
-            index={idx}
-            date={item.date}
-          />
-        ))}
+        <div className="w-full mt-2 overflow-x-auto overflow-y-hidden  relative">
+          <div className="w-full flex flex-col gap-y-13 h-[210px]">
+            {sleepOptions.map((_, index) => (
+              <hr
+                className="absolute top-0 left-0  text-blue-100 h-[1px] w-[625px] md:w-full  "
+                style={{
+                  transform: `translateY(${LEVEL * index}px)`,
+                }}
+                key={index}
+              />
+            ))}
+          </div>
+          <div className=" flex items-center gap-x-[12.7px] mt-[67px] ">
+            {moodEntries?.map((item, idx) => (
+              <ChartEntry
+                key={`${item.date}-${idx}`}
+                entry={item.entry}
+                index={idx}
+                date={item.date}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
