@@ -58,6 +58,7 @@ const app = new Hono()
           email: user.email,
           cover: user.cover,
           onboardingComplete: user.onboardingComplete,
+          name: user.name,
         },
         token,
       });

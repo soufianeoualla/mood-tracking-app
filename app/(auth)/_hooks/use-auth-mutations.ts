@@ -26,12 +26,7 @@ export const useAuthMutation = (isLogin: boolean, reset: () => void) => {
       setSuccessMessage(data.message);
       if (isLogin) {
         setToken(data.token);
-        setUser({
-          id: data.user.id,
-          email: data.user.email,
-          cover: data.user.cover,
-          onboardingComplete: data.user.onboardingComplete,
-        });
+        setUser({ ...data.user });
       }
       reset();
       return data;
@@ -45,5 +40,11 @@ export const useAuthMutation = (isLogin: boolean, reset: () => void) => {
     },
   });
 
-  return { mutation, successMessage, errorMessage, setSuccessMessage, setErrorMessage};
+  return {
+    mutation,
+    successMessage,
+    errorMessage,
+    setSuccessMessage,
+    setErrorMessage,
+  };
 };
