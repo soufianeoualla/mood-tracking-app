@@ -15,7 +15,7 @@ const AverageMoodCard = () => {
 
   if (!mood)
     return (
-      <div className="p-5 rounded-[20px] flex flex-col gap-y-3 bg-blue-100 justify-center items-start h-full relative ">
+      <div className="p-5 rounded-[20px] h-[150px] md:h-full flex flex-col gap-y-3 bg-blue-100 justify-center items-start relative ">
         <Image
           src={pattern}
           alt="Pattern"
@@ -38,7 +38,7 @@ const AverageMoodCard = () => {
   return (
     <div
       className={cn(
-        "p-5 rounded-[20px] flex flex-col gap-y-3 justify-center items-start h-full relative ",
+        "p-5 h-[150px] md:h-full  flex flex-col gap-y-3 justify-center items-start relative ",
         averageData?.averageMood ? moodColor : "bg-blue-100"
       )}
     >
@@ -75,7 +75,7 @@ const AverageSleepCard = () => {
 
   if (!averageData?.averageSleepHours)
     return (
-      <div className="p-5 rounded-[20px] text-white  flex bg-blue-100 flex-col gap-y-3 justify-center items-start h-full relative">
+      <div className="p-5 rounded-[20px] h-[150px] md:h-full text-white  flex bg-blue-100 flex-col gap-y-3 justify-center items-start relative">
         <Image
           src={pattern}
           alt="Pattern"
@@ -96,7 +96,7 @@ const AverageSleepCard = () => {
   const sleepHours = getSleepHours(averageData?.averageSleepHours);
   const status = averageData?.sleepStatus ?? null;
   return (
-    <div className="p-5 rounded-[20px] text-white bg-blue-600  flex flex-col gap-y-3 justify-center items-start h-full relative">
+    <div className="px-5 h-[150px] md:h-full rounded-[20px] text-white bg-blue-600  flex flex-col gap-y-3 justify-center items-start  relative">
       <Image
         src={pattern}
         alt="Pattern"
@@ -128,7 +128,7 @@ const AverageSleepCard = () => {
 
 const AverageMoodSleep = () => {
   return (
-    <div className="bg-neutral-0 rounded-2xl p-6 border border-blue-100  space-y-6 h-full flex flex-col relative">
+    <div className="bg-neutral-0 rounded-2xl p-4 md:p-6 border border-blue-100  space-y-6 h-full flex flex-col relative">
       {" "}
       <div className="space-y-3 flex flex-col h-full ">
         <h5 className="text-preset-5 text-neutral-900">

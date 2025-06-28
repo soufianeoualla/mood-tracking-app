@@ -24,7 +24,7 @@ const Greeting = () => {
     } else {
       return (
         <>
-          <Button onClick={() => setShowModal(true)} className="my-16">
+          <Button onClick={() => setShowModal(true)} className="my-12">
             Log today&apos;s mood
           </Button>
           <LogMoodProvider>
@@ -44,10 +44,10 @@ const Greeting = () => {
 
   return (
     <div className="flex justify-center items-center mt-16 flex-col gap-y-2.5">
-      <h3 className="text-preset-3 text-blue-600 capitalize">
+      <h3 className="text-preset-3-mobile md:text-preset-3 text-blue-600 capitalize">
         Hello, {firstName}!
       </h3>
-      <h1 className="text-preset-1 text-neutral-900">
+      <h1 className="text-preset-1-mobile md:text-preset-1  text-neutral-900 text-center">
         How are you feeling today?
       </h1>
       <span className="text-neutral-600 text-preset-6">{formattedDay}</span>

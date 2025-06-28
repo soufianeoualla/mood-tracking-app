@@ -30,7 +30,7 @@
 }
 
 .text-preset-1-mobile {
-  @apply font-bold text-[46px] leading-[120%] tracking-[-0.125em];
+  @apply font-bold text-[46px] leading-[120%] tracking-[-1px];
 }
 
 .text-preset-2 {

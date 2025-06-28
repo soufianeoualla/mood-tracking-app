@@ -69,7 +69,9 @@ const Popover = ({ entry, bottom }: { entry: MoodEntry; bottom: boolean }) => {
 
       <div className="flex flex-col gap-y-2 mb-3">
         <span className="text-neutral-600 text-preset-8">Reflection</span>
-        <p className="text-neutral-900 text-preset-9 text-wrap">{entry.comment}</p>
+        <p className="text-neutral-900 text-preset-9 text-wrap">
+          {entry.comment}
+        </p>
       </div>
 
       <div className="flex flex-col gap-y-2 ">
@@ -176,8 +178,10 @@ const ChartEntry = ({
 const MoodSleepChart = () => {
   const { moodEntries } = useMoodContext();
   return (
-    <div className="bg-neutral-0 rounded-[10px] p-8 border border-blue-100">
-      <h3 className="text-preset-3 text-neutral-900">Mood and sleep trends</h3>
+    <div className="bg-neutral-0 rounded-[10px] p-4 md:p-8 border border-blue-100  overflow-x-auto scrollbar-hide">
+      <h3 className="text-preset-3-mobile md:text-preset-3 text-neutral-900">
+        Mood and sleep trends
+      </h3>
 
       <div className="flex flex-col gap-y-10 w-full mt-8" role="list">
         {sleepOptions.map((option, index) => (
@@ -185,11 +189,7 @@ const MoodSleepChart = () => {
         ))}
       </div>
 
-      <div
-        className="pl-21 flex items-center gap-x-4 mt-[61px]"
-        role="img"
-        aria-label="Mood and sleep chart showing recent 10 entries"
-      >
+      <div className="pl-21 flex items-center gap-x-3.5 mt-[61px] ">
         {moodEntries?.map((item, idx) => (
           <ChartEntry
             key={`${item.date}-${idx}`}

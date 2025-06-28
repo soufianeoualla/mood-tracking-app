@@ -20,7 +20,7 @@ const Modal = ({
         onClick={onClose}
         className="fixed inset-0 bg-neutral-900/70 w-full h-full z-50"
       />
-      <div className=" fixed top-1/2 left-1/2 -translate-1/2 z-[90]">
+      <div className=" md:fixed md:top-1/2 md:left-1/2 md:-translate-1/2 z-[90] w-full top-10 absolute left-3 overflow-y-scroll   ">
         <LucideX
           className="absolute top-8 right-8 text-neutral-300 w-4 h-4 cursor-pointer"
           onClick={onClose}

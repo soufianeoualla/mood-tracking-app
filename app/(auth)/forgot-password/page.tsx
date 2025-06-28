@@ -30,7 +30,7 @@ const Page = () => {
   };
 
   return (
-    <div className="bg-neutral-0 py-10 px-8 w-[530px] rounded-2xl shadow-lg">
+    <div className="bg-neutral-0 py-10 md:px-8 px-4 w-[95%] md:w-[530px] rounded-2xl shadow-lg">
       <h3 className="text-preset-3 text-neutral-900 mb-2">
         {"Forgot your password?"}
       </h3>

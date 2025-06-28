@@ -18,7 +18,7 @@ const AuthCardWrapper = ({
   const action = bottomLabel.split("?")[1];
 
   return (
-    <div className="bg-neutral-0 py-10 px-8 w-[530px] rounded-2xl shadow-lg">
+    <div className="bg-neutral-0 py-10 md:px-8 px-4 w-[95%] md:w-[530px] rounded-2xl shadow-lg mb-10">
       <h3 className="text-preset-3 text-neutral-900 mb-2">{title}</h3>
       <p className="text-preset-6 text-neutral-600">{text}</p>
       {children}

@@ -139,7 +139,7 @@ const LogMood = ({ hide }: { hide: () => void }) => {
   const buttonText = step === 4 ? "Submit" : "Continue";
 
   return (
-    <div className="px-10 py-12 custom-linear-gradiant rounded-2xl w-[600px] max-w-full">
+    <div className="md:px-10 md:py-12 px-5 py-8 custom-linear-gradiant rounded-2xl w-[95%] md:w-[600px] ">
       <h2 className="text-preset-2 text-neutral-900">Log your mood</h2>
 
       <ProgressBar currentStep={step} totalSteps={4} />

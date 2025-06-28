@@ -19,22 +19,20 @@ const MoodConatainer = () => {
   }
   const { Icon, moodText } = getMoodConfig(currentMoodEntry.mood as MoodLevel);
   return (
-    <div className="bg-neutral-0 border border-blue-100 rounded-2xl p-8  flex items-start justify-between h-[340px] overflow-hidden">
-      <div className="flex flex-col justify-between items-start h-full">
-        <h3 className="text-neutral-600 text-preset-3">
-          I’m feeling <br />
-          <span className="text-preset-2 text-neutral-900">{moodText}</span>
-        </h3>
+    <div className="bg-neutral-0 border border-blue-100 rounded-2xl p-8 flex flex-col justify-between gap-8 items-center md:items-start xl:h-[340px] overflow-hidden relative">
+      <h3 className="text-neutral-600 text-preset-3 text-center">
+        I’m feeling <br />
+        <span className="text-preset-2 text-neutral-900">{moodText}</span>
+      </h3>
 
-        <div className="grid gap-y-3">
-          <Image src={quoteIcon} alt="Quote Icon" className="w-6 h-6" />
-          <p className="text-neutral-600 text-preset-6-italic">
-            “ {currentMoodEntry.generatedQuote}”
-          </p>
-        </div>
+      <Icon className="w-fit xl:absolute xl:h-[320px] right-10 xl:translate-y-6 h-[200px] " />
+
+      <div className="flex flex-col items-center gap-4 md:items-start  md:w-2/5 ">
+        <Image src={quoteIcon} alt="Quote Icon" className="w-6 h-6" />
+        <p className="text-neutral-900 text-preset-6-italic text-center md:text-left">
+          “ {currentMoodEntry.generatedQuote}”
+        </p>
       </div>
-
-      <Icon className="w-full h-[320px] translate-y-6 " />
     </div>
   );
 };
@@ -87,7 +85,7 @@ const CommentContainer = () => {
 
         <p className="text-neutral-900 text-preset-6">{comment}</p>
       </div>
-      <div className="flex flex-wrap gap-x-3">
+      <div className="flex flex-wrap gap-x-3 mt-8">
         {feelings.map((feeling, index) => (
           <span key={index} className="text-neutral-600 text-preset-6-italic">
             #{feeling}
@@ -100,7 +98,7 @@ const CommentContainer = () => {
 
 const LoggedMood = () => {
   return (
-    <div className="grid grid-cols-[670px_1fr] gap-x-8 mt-16 mb-8 w-full">
+    <div className="grid xl:grid-cols-[670px_1fr] gap-8 mt-16 mb-8 w-full">
       <MoodConatainer />
       <div className="flex flex-col gap-y-5 w-full">
         <SleepConatiner />
