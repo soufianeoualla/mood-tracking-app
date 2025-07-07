@@ -96,7 +96,7 @@ Tests are written for each step component:
 Example (MoodStep):
 ```ts
 fireEvent.click(screen.getByText("Happy"))
-expect(mockSetMood).toHaveBeenCalledWith(2)
+expect(mockSetMood).toHaveBeenCalledWith(1)
 ```
 
 ---
