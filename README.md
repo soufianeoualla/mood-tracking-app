@@ -29,7 +29,7 @@
 
 - **⚡ Modern Tech Stack**
 
-  - Next.js 14 with App Router
+  - Next.js 15 with App Router
   - TypeScript for type safety
   - Tailwind CSS for styling
   - React Context for state management
@@ -53,7 +53,7 @@
 1. **Clone the repository**
 
    ```bash
-   git clone <https://github.com/soufianeoualla/mood-tracking-app>
+   git clone https://github.com/soufianeoualla/mood-tracking-app
    cd mood-tracking-app
    ```
 
@@ -65,7 +65,7 @@
 
 3. **Environment Setup**
 
-   Create a `.env.local` file:
+   Create a `.env` file:
 
    ```bash
    # Database
@@ -134,48 +134,79 @@ mood-tracking-app/
 └── __tests__/                     # Test files
 ```
 
+## 🔧 API Documentation
+
+### Authentication Endpoints
+
+| Method | Endpoint                    | Description                 |
+| ------ | --------------------------- | --------------------------- |
+| `POST` | `/api/auth/login`           | User login                  |
+| `POST` | `/api/auth/signup`          | User registration           |
+| `POST` | `/api/auth/forgot-password` | Password reset request      |
+| `POST` | `/api/auth/reset-password`  | Password reset confirmation |
+| `GET`  | `/api/auth/verify`          | Email verification          |
+
+### Mood Tracking Endpoints
+
+| Method | Endpoint                  | Description                                     |
+| ------ | ------------------------- | ----------------------------------------------- |
+| `POST` | `/api/mood-entry`         | Create daily mood entry with AI-generated quote |
+| `GET`  | `/api/mood-entry`         | Get today's mood entry                          |
+| `GET`  | `/api/mood-entry/average` | Get mood/sleep averages with trend analysis     |
+| `GET`  | `/api/mood-entry/chart`   | Get 11-day chart data for mood visualization    |
+
+### Request/Response Examples
+
+#### Create Mood Entry
+
+```typescript
+// POST /api/mood-entry
+{
+  "mood": 2,
+  "feelings": ["EXCITED", "GRATEFUL"],
+  "journal": "Had a great day today!",
+  "sleepHours": 7.5
+}
+```
+
+#### Get Chart Data
+
+```typescript
+// GET /api/mood-entry/chart
+{
+  "data": [
+    {
+      "date": "2025-07-07",
+      "mood": 2,
+      "sleepHours": 7.5
+    }
+    // ... more entries
+  ]
+}
+```
+
 ## 🧪 Testing
 
 Run the comprehensive test suite:
 
-````bash
+```bash
 # Run all tests
 npm run test
 
-### Test Coverage
+```
 
 #### 🧪 Component Tests
+
 - ✅ **Avatar Component** (`avatar.test.tsx`) - User avatar display and fallbacks
 - ✅ **Button Component** (`button.test.tsx`) - Button variants and interactions
 - ✅ **Profile Form** (`profile-form.test.tsx`) - User profile management
 
 #### 📝 Form Step Tests
+
 - ✅ **Mood Step** (`mood-step.test.tsx`) - Mood selection logic and validation
 - ✅ **Feelings Step** (`feeling-step.test.tsx`) - Multi-select feelings functionality
 - ✅ **Journal Step** (`journal-step.test.tsx`) - Text input validation and character limits
 - ✅ **Sleep Step** (`sleep-step.test.tsx`) - Sleep hours selection, option rendering, and error validation
-
-## 🔧 API Documentation
-
-### Authentication Endpoints
-
-```typescript
-POST /api/auth/login                     # User login
-POST /api/auth/signup                    # User registration
-POST /api/auth/forgot-password           # Password reset request
-POST /api/auth/reset-password            # Password reset confirmation
-GET  /api/auth/verify                    # Email verification
-````
-
-### Mood Tracking Endpoints
-
-```typescript
-POST /api/mood-entry          # Create daily mood entry with AI-generated quote
-GET  /api/mood-entry          # Get today's mood entry
-GET  /api/mood-entry/average  # Get mood/sleep averages with trend analysis
-GET  /api/mood-entry/chart    # Get 11-day chart data for mood visualization
-
-```
 
 ## 🛠️ Development Scripts
 
@@ -194,7 +225,6 @@ npm run test         # Run test suite
 3. **Daily Mood Logging** - Track mood, feelings, journal, and sleep
 4. **Dashboard** - View mood trends and insights
 5. **Profile Management** - Update personal information
-
 
 ## 📄 License
 
