@@ -1,113 +1,216 @@
-# Mood Tracking App
+# 🧠 Mood Tracking App
 
-A beautifully structured and user-friendly mood tracking application built with **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, and **React Context**. The app allows users to log their mood, feelings, journal entries, and sleep duration using a multi-step form flow.
+> A beautifully crafted mood tracking application that helps users monitor their emotional well-being through an intuitive multi-step interface.
 
----
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38B2AC?style=flat-square&logo=tailwind-css)
+![Hono](https://img.shields.io/badge/Hono-API-orange?style=flat-square)
 
-## 🧠 Features
+## ✨ Features
 
-- Multi-step form with:
-  - Mood selection
-  - Feelings tagging
-  - Journal entry
-  - Sleep hours input
-- Context-based state management
-- Form validation
-- Beautiful UI with Tailwind
-- Unit + Integration tests using Vitest + RTL
+- **🎯 Multi-Step Form Flow**
 
----
+  - Mood selection with visual indicators
+  - Feelings tagging system
+  - Personal journal entries
+  - Sleep duration tracking
 
-## 📁 Folder Structure
+- **🔐 Authentication System**
+
+  - Secure login/signup flow
+  - Password reset functionality
+  - Email verification
+  - Protected routes
+
+- **🤖 AI-Powered Features**
+
+  - Daily motivational quotes via Gemini AI
+
+- **⚡ Modern Tech Stack**
+
+  - Next.js 14 with App Router
+  - TypeScript for type safety
+  - Tailwind CSS for styling
+  - React Context for state management
+  - Hono-powered API backend
+
+- **🧪 Comprehensive Testing**
+  - Unit tests with Vitest
+  - Integration tests with React Testing Library
+  - Component coverage for all form steps
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Database (PostgreSQL/MySQL)
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <https://github.com/soufianeoualla/mood-tracking-app>
+   cd mood-tracking-app
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+
+   Create a `.env.local` file:
+
+   ```bash
+   # Database
+   DATABASE_URL="your-database-url"
+
+   # App Configuration
+   NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   JWT_SECRET="your-jwt-secret"
+
+   # Cloudinary (for image uploads)
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
+   NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="your-upload-preset"
+
+   # Email Service
+   RESEND_API_KEY="your-resend-api-key"
+
+   # AI Integration
+   GEMINI_API_KEY="your-gemini-api-key"
+   ```
+
+4. **Database Setup**
+
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Start Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+## 📁 Project Structure
 
 ```
-app/
-├── (auth)/                  # Auth-related routes and components
-├── (protected)/             # Protected routes after login
-│   ├── _components/         # UI Steps: Mood, Feelings, Journal, Sleep
-│   ├── _context/            # `useLogMoodContext` context definition
-│   ├── _services/           # API service calls (fetching/updating mood data)
-│   ├── layout.tsx           # Shared layout for protected routes
-│   ├── page.tsx             # Log mood entry point
-│   └── utils.ts             # Shared constants (MOODS_CONFIG, FEELING_TAGS, etc.)
-components/
-└── ui/                      # Reusable UI components (Avatar, Button, ErrorMessage, etc.)
+mood-tracking-app/
+├── app/
+│   ├── (auth)/                    # Authentication routes
+│   │   ├── login/
+│   │   ├── sign-up/
+│   │   ├── forgot-password/
+│   │   ├── reset-password/
+│   │   └── verify/
+│   ├── (protected)/               # Protected application routes
+│   │   ├── _components/           # Mood tracking form components
+│   │   ├── _context/              # Context providers
+│   │   ├── _services/             # API service layer
+│   │   ├── onboarding/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── api/                       # API routes (Hono)
+│   │   ├── auth.route.ts
+│   │   ├── mood-entry.route.ts
+│   │   ├── onboarding.route.ts
+│   │   └── profile.route.ts
+│   └── layout.tsx
+├── components/
+│   └── ui/                        # Reusable UI components
+├── lib/                           # Utility functions
+├── prisma/                        # Database schema & migrations
+├── public/                        # Static assets
+└── __tests__/                     # Test files
 ```
-
----
-
-## 🚀 Getting Started
-
-### 1. Install dependencies
-
-```bash
-npm install
-```
-
-### 2. Set up environment variables
-
-Create a `.env` file and add required keys:
-
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-```
-
-### 3. Run development server
-
-```bash
-npm run dev
-```
-
-Open `http://localhost:3000` in your browser.
-
----
 
 ## 🧪 Testing
 
-This project uses:
+Run the comprehensive test suite:
 
-- [`Vitest`](https://vitest.dev/)
-- [`@testing-library/react`](https://testing-library.com/docs/react-testing-library/intro/)
+````bash
+# Run all tests
+npm run test
 
-### Run tests
+### Test Coverage
+
+#### 🧪 Component Tests
+- ✅ **Avatar Component** (`avatar.test.tsx`) - User avatar display and fallbacks
+- ✅ **Button Component** (`button.test.tsx`) - Button variants and interactions
+- ✅ **Profile Form** (`profile-form.test.tsx`) - User profile management
+
+#### 📝 Form Step Tests
+- ✅ **Mood Step** (`mood-step.test.tsx`) - Mood selection logic and validation
+- ✅ **Feelings Step** (`feeling-step.test.tsx`) - Multi-select feelings functionality
+- ✅ **Journal Step** (`journal-step.test.tsx`) - Text input validation and character limits
+- ✅ **Sleep Step** (`sleep-step.test.tsx`) - Sleep hours selection, option rendering, and error validation
+
+## 🔧 API Documentation
+
+### Authentication Endpoints
+
+```typescript
+POST /api/auth/login                     # User login
+POST /api/auth/signup                    # User registration
+POST /api/auth/forgot-password           # Password reset request
+POST /api/auth/reset-password            # Password reset confirmation
+GET  /api/auth/verify                    # Email verification
+````
+
+### Mood Tracking Endpoints
+
+```typescript
+POST /api/mood-entry          # Create daily mood entry with AI-generated quote
+GET  /api/mood-entry          # Get today's mood entry
+GET  /api/mood-entry/average  # Get mood/sleep averages with trend analysis
+GET  /api/mood-entry/chart    # Get 11-day chart data for mood visualization
+
+```
+
+## 🛠️ Development Scripts
 
 ```bash
-npm run test
+npm run dev          # Start development server
+npm run build        # Build production version
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run test         # Run test suite
 ```
 
-Tests are located in `__test__/` and include coverage for:
+## 📱 Features Walkthrough
 
-- MoodStep
-- FeelingsStep
-- JournalStep
-- Context mocking
-- Error message rendering
+1. **User Registration** - Create account with email verification
+2. **Onboarding** - Set up user preferences
+3. **Daily Mood Logging** - Track mood, feelings, journal, and sleep
+4. **Dashboard** - View mood trends and insights
+5. **Profile Management** - Update personal information
 
----
 
-## 📂 Tests (Vitest)
+## 📄 License
 
-Tests are written for each step component:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- **Mocking context with `useLogMoodContext`**
-- **Interacting with form elements**
-- **Asserting state updates and validation errors**
+## 👨‍💻 Author
 
-Example (MoodStep):
-```ts
-fireEvent.click(screen.getByText("Happy"))
-expect(mockSetMood).toHaveBeenCalledWith(1)
-```
+**Soufiane Oualla**  
+Frontend Developer
+
+- GitHub: [@soufiane-oualla](https://github.com/soufiane-oualla)
+- LinkedIn: [Soufiane Oualla](https://linkedin.com/in/soufianeoualla)
 
 ---
 
-## ✨ Author
-
-Made by Soufiane Oualla — Frontend Developer  
-For questions or contributions, feel free to open an issue or contact directly.
-
----
-
-## 📝 License
-
-MIT
+<div align="center">
+  <p>Built with ❤️ using Next.js and TypeScript</p>
+  <p>⭐ Star this repo if you find it helpful!</p>
+</div>
