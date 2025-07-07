@@ -164,7 +164,7 @@ mood-tracking-app/
 {
   "mood": 2,
   "feelings": ["EXCITED", "GRATEFUL"],
-  "journal": "Had a great day today!",
+  "comment": "Had a great day today!",
   "sleepHours": 7.5
 }
 ```
@@ -176,9 +176,11 @@ mood-tracking-app/
 {
   "data": [
     {
-      "date": "2025-07-07",
+      "date": "2025-07-07T21:08:09.409Z",
       "mood": 2,
-      "sleepHours": 7.5
+      "sleepHours": 7.5,
+      "feelings": ["EXCITED", "GRATEFUL"],
+      "comment": "Had a great day today!"
     }
     // ... more entries
   ]
