@@ -34,7 +34,7 @@ const validateFile = (file: File): string | null => {
 
 const UserProfileForm = ({
   onSubmit,
-  defaultValues = { name: "", cover: "" },
+  defaultValues = { name: "", cover: undefined },
   isSubmitting = false,
   title = "Personalize your experience",
   description = "Add your name and a profile picture to make Mood yours.",
@@ -140,7 +140,9 @@ const UserProfileForm = ({
             )}
           />
           {errors.name && (
-            <p className="text-red-700 text-preset-8 font-medium">* {errors.name.message}</p>
+            <p className="text-red-700 text-preset-8 font-medium">
+              * {errors.name.message}
+            </p>
           )}
         </div>
 
@@ -152,9 +154,9 @@ const UserProfileForm = ({
               <div className="flex items-start gap-x-5">
                 <Avatar size={64} src={uploadedImageUrl || undefined} />
                 <div>
-                  <span className="text-preset-6 text-neutral-900">
+                  <label htmlFor="cover-upload" className="text-preset-6 text-neutral-900">
                     Upload Image
-                  </span>
+                  </label>
                   <p className="text-neutral-600 text-preset-7 mt-1.5">
                     Max 250KB, PNG or JPEG
                   </p>
@@ -179,6 +181,7 @@ const UserProfileForm = ({
                   <Input
                     type="file"
                     accept=".png,.jpeg,.jpg"
+                    id="cover-upload"
                     className="hidden"
                     ref={(e) => {
                       fileInputRef.current = e;

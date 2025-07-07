@@ -8,10 +8,14 @@ interface AvatarProps {
   size?: number;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ src, alt = "Avatar", size = 42 }) => {
+const Avatar: React.FC<AvatarProps> = ({
+  src = avatar,
+  alt = "user",
+  size = 42,
+}) => {
   return (
     <Image
-      src={src || avatar}
+      src={src}
       alt={alt}
       width={size}
       height={size}

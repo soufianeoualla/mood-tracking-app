@@ -1,4 +1,4 @@
-import ErrorMessage from "@/components/error-message";
+import ErrorMessage from "@/components/ui/error-message";
 import Checkbox from "@/components/ui/checkbox";
 
 import { cn } from "@/lib/utils";

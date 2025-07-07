@@ -23,7 +23,7 @@ interface MoodData {
   sleepHours: MoodEntrySchemaType['sleepHours'];
 }
 
-interface LogMoodContextType {
+export interface LogMoodContextType {
   data: MoodData;
   setMood: (mood: MoodEntrySchemaType["mood"]) => void;
   errors: ValidationErrors;

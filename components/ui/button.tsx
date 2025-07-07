@@ -24,7 +24,7 @@ const Button = ({
 
     case "secondary":
       style =
-        "bg-white textneutral-900 hover:bg-neutral-100 disabled:bg-white/60 ";
+        "bg-white text-neutral-900 hover:bg-neutral-100 disabled:bg-white/60 ";
     default:
       break;
   }

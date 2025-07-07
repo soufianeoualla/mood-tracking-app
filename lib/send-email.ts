@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 
-import WelcomeTemplate from "@/components/welcome-email";
-import ResetPassword from "@/components/reset-password-email";
+import WelcomeTemplate from "@/components/templates/welcome-email";
+import ResetPassword from "@/components/templates/reset-password-email";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const domain = process.env.NEXT_PUBLIC_APP_URL;
 

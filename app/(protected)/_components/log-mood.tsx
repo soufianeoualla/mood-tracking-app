@@ -28,7 +28,7 @@ interface ValidationErrors {
   sleepHours?: string;
 }
 
-const MIN_JOURNAL_LENGTH = 10;
+export const MIN_JOURNAL_LENGTH = 10;
 
 const validateStep = (step: number, data: MoodData): ValidationErrors => {
   const errors: ValidationErrors = {};

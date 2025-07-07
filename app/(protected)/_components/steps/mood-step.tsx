@@ -1,13 +1,13 @@
-import ErrorMessage from "@/components/error-message";
+import ErrorMessage from "@/components/ui/error-message";
 
 import Radio from "@/components/ui/radio";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { memo } from "react";
 
 import { useLogMoodContext } from "../../_context/log-mood-context";
 import { MOODS_CONFIG } from "../../utils";
 
-const Mood = React.memo(
+const Mood = memo(
   ({
     mood,
     Icon,
