@@ -25,7 +25,7 @@ export const WelcomeTemplate = ({
     <Body style={main}>
       <Container style={container}>
         <Img
-          src={`${baseUrl}/logo.svg`}
+          src={`${baseUrl}/logo.png`}
           width="170"
           height="50"
           alt="Mood Tracker"
