@@ -12,8 +12,10 @@ import { getMoodConfig, getSleepHours, MoodLevel } from "../utils";
 const AverageMoodCard = () => {
   const { averageData } = useMoodContext();
   const mood = averageData?.averageMood;
+  console.log("Average Mood:", mood);
 
-  if (!mood)
+  console.log("Average Mood Data:", averageData);
+  if (mood === null)
     return (
       <div className="p-5 rounded-[20px] h-[150px] md:h-full flex flex-col gap-y-3 bg-blue-100 justify-center items-start relative ">
         <Image
@@ -39,7 +41,7 @@ const AverageMoodCard = () => {
     <div
       className={cn(
         "p-5 h-[150px] rounded-[20px] md:h-full  flex flex-col gap-y-3 justify-center items-start relative ",
-        averageData?.averageMood ? moodColor : "bg-blue-100"
+        moodColor
       )}
     >
       <Image

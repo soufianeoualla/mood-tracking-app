@@ -2,10 +2,11 @@ import { Hono } from "hono";
 import authMiddleware from "./authMiddleware";
 import { zValidator } from "@hono/zod-validator";
 import moodEntrySchema from "@/schemas/mood.entry";
-import { MoodEntryRepository } from "@/prisma/repositories/mood-entry.repository";
+
 import { MoodEntry } from "@prisma/client";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { MoodRepository } from "@/prisma/repositories/mood.repository";
 const generateQuotePrompt = ({
   mood,
   sleepHours,
@@ -20,7 +21,7 @@ const generateQuotePrompt = ({
   )}.`;
 };
 
-const moodEntryRepository = new MoodEntryRepository();
+const moodRepository = new MoodRepository();
 
 const getStartOfToday = () => {
   const today = new Date();
@@ -82,7 +83,7 @@ const app = new Hono()
       const { mood, sleepHours, comment, feelings } = moodEntry;
       const moodEntryDate = getStartOfToday();
 
-      const existingEntry = await moodEntryRepository.getEntriesByDate(
+      const existingEntry = await moodRepository.getEntriesByDate(
         user.id,
         moodEntryDate
       );
@@ -96,7 +97,7 @@ const app = new Hono()
         feelings,
       });
 
-      await moodEntryRepository.createEntry({
+      await moodRepository.createEntry({
         user: {
           connect: {
             id: user.id,
@@ -131,7 +132,7 @@ const app = new Hono()
       }
 
       const moodEntryDate = getStartOfToday();
-      const entries = await moodEntryRepository.getEntriesByDate(
+      const entries = await moodRepository.getEntriesByDate(
         user.id,
         moodEntryDate
       );
@@ -152,10 +153,15 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const entries = await moodEntryRepository.getLastEntries(user.id);
-      if (entries.length === 0) {
-        return c.json({ averageMood: null });
-      }
+      const today = new Date();
+      const startDate = new Date();
+      startDate.setDate(today.getDate() - 5);
+
+      const entries = await moodRepository.getEntriesBetweenDates(
+        user.id,
+        startDate,
+        today
+      );
 
       const calcAverages = (
         entries: Array<{ mood: number; sleepHours: number }>
@@ -168,7 +174,7 @@ const app = new Hono()
         };
       };
 
-      if (entries.length > 5) {
+      if (entries.length >= 5) {
         const latestEntries = entries.slice(0, 5);
         const previousEntries = entries.slice(5);
 
@@ -179,15 +185,15 @@ const app = new Hono()
           latestAvg.mood > previousAvg.mood
             ? "up"
             : latestAvg.mood < previousAvg.mood
-            ? "down"
-            : "same";
+              ? "down"
+              : "same";
 
         const sleepStatus =
           latestAvg.sleep > previousAvg.sleep
             ? "up"
             : latestAvg.sleep < previousAvg.sleep
-            ? "down"
-            : "same";
+              ? "down"
+              : "same";
 
         return c.json({
           averageMood: Math.round(latestAvg.mood),
@@ -196,20 +202,9 @@ const app = new Hono()
           sleepStatus,
         });
       }
-      if (entries.length < 5) {
-        return c.json({
-          averageMood: null,
-          averageSleepHours: null,
-          moodStatus: null,
-          sleepStatus: null,
-        });
-      }
-
-      const { mood, sleep } = calcAverages(entries);
-
       return c.json({
-        averageMood: Math.round(mood),
-        averageSleepHours: sleep,
+        averageMood: null,
+        averageSleepHours: null,
         moodStatus: null,
         sleepStatus: null,
       });
@@ -227,35 +222,18 @@ const app = new Hono()
 
       const today = new Date();
       const startDate = new Date();
-      startDate.setDate(today.getDate() - 10);
+      startDate.setDate(today.getDate() - 11);
 
-      const entries = await moodEntryRepository.getEntriesBetweenDates(
+      const entries = await moodRepository.getEntriesBetweenDates(
         user.id,
         startDate,
         today
       );
 
-      const entryMap = new Map<string, MoodEntry>();
-
-      entries.forEach((entry: MoodEntry) => {
-        const dateStr = entry.createdAt.toISOString().split("T")[0];
-        entryMap.set(dateStr, {
-          ...entry,
-        });
-      });
-
-      const chartData = [];
-      for (let i = 0; i < 11; i++) {
-        const date = new Date(startDate);
-        date.setDate(startDate.getDate() + i);
-        const dateStr = date.toISOString().split("T")[0];
-
-        const data = entryMap.get(dateStr);
-        chartData.push({
-          date: dateStr,
-          entry: data ? data : null,
-        });
-      }
+      const chartData = entries.map((entry: MoodEntry) => ({
+        date: entry.createdAt.toISOString().split("T")[0],
+        entry,
+      }));
 
       return c.json({ chartData });
     } catch (error) {

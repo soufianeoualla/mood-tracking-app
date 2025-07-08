@@ -1,7 +1,7 @@
 import { db } from "@/config/db";
 import { Prisma } from "@prisma/client";
 
-export class MoodEntryRepository {
+export class MoodRepository {
   async getAllEntries(userId: number) {
     return await db.moodEntry.findMany({
       where: { userId },
@@ -21,14 +21,6 @@ export class MoodEntryRepository {
           lte: endOfDay,
         },
       },
-    });
-  }
-
-  async getLastEntries(userId: number) {
-    return await db.moodEntry.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      take: 10,
     });
   }
 

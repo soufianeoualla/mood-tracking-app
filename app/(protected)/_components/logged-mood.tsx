@@ -20,7 +20,7 @@ const MoodConatainer = () => {
   const { Icon, moodText } = getMoodConfig(currentMoodEntry.mood as MoodLevel);
   return (
     <div className="bg-neutral-0 border border-blue-100 rounded-2xl p-8 flex flex-col justify-between gap-8 items-center md:items-start md:h-[340px] overflow-hidden relative">
-      <h3 className="text-neutral-600 text-preset-3 text-center">
+      <h3 className="text-neutral-600 text-preset-3 text-center md:text-left">
         I’m feeling <br />
         <span className="text-preset-2 text-neutral-900">{moodText}</span>
       </h3>

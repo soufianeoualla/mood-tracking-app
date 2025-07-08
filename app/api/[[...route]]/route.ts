@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 import auth from "@/app/api/[[...route]]/auth.route";
-import moodEntry from "@/app/api/[[...route]]/mood-entry.route";
+import mood from "@/app/api/[[...route]]/mood.route";
 import onbording from "@/app/api/[[...route]]/onboarding.route";
 import profile from "@/app/api/[[...route]]/profile.route";
 
@@ -10,7 +10,7 @@ const app = new Hono().basePath("/api");
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const routes = app
   .route("/auth", auth)
-  .route("/mood", moodEntry)
+  .route("/mood", mood)
   .route("/onboarding", onbording)
   .route("/profile", profile);
 
