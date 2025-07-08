@@ -37,6 +37,8 @@ const AuthForm = () => {
   } = useAuthMutation(isLogin, reset);
 
   const onSubmit = async (data: AuthSchemaType) => {
+    setErrorMessage("");
+    setSuccessMessage("");
     mutation.mutate(data);
   };
 
@@ -75,17 +77,16 @@ const AuthForm = () => {
           )}
         />
       </div>
-        <div className=" my-4 flex justify-end">
-      {isLogin && (
-
-        <Link
-          href={"/forgot-password"}
-          className="text-blue-600 text-preset-7 hover:underline"
+      <div className=" my-4 flex justify-end">
+        {isLogin && (
+          <Link
+            href={"/forgot-password"}
+            className="text-blue-600 text-preset-7 hover:underline"
           >
-          Forgot your password?
-        </Link>
-      )}
-          </div>
+            Forgot your password?
+          </Link>
+        )}
+      </div>
       <FormMessage message={successMessage} />
       <FormMessage message={errorMessage} isError />
 

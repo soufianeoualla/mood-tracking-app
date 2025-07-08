@@ -24,13 +24,7 @@ export const WelcomeTemplate = ({
     <Preview>Start tracking your mood, sleep, and feelings</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img
-          src={`${baseUrl}/logo.png`}
-          width="170"
-          height="50"
-          alt="Mood Tracker"
-          style={logo}
-        />
+        <Img src={`${baseUrl}/logo.png`} alt="Mood Tracker" style={logo} />
         <Text style={paragraph}>Hi,</Text>
         <Text style={paragraph}>
           Welcome to Mood Tracker — your personal companion for emotional
