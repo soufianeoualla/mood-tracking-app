@@ -8,12 +8,12 @@ export class MoodRepository {
     });
   }
 
-  async getEntriesByDate(userId: number, date: Date) {
+  async getEntryByDate(userId: number, date: Date) {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
-    return await db.moodEntry.findMany({
+    return await db.moodEntry.findFirst({
       where: {
         userId,
         createdAt: {

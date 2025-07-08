@@ -23,11 +23,6 @@ const generateQuotePrompt = ({
 
 const moodRepository = new MoodRepository();
 
-const getStartOfToday = () => {
-  const today = new Date();
-  return new Date(today.getFullYear(), today.getMonth(), today.getDate());
-};
-
 const getAverageSleepHours = (hours: number) => {
   if (hours <= 3) return 1;
   if (hours <= 5) return 3.5;
@@ -81,13 +76,10 @@ const app = new Hono()
       }
 
       const { mood, sleepHours, comment, feelings } = moodEntry;
-      const moodEntryDate = getStartOfToday();
 
-      const existingEntry = await moodRepository.getEntriesByDate(
-        user.id,
-        moodEntryDate
-      );
-      if (existingEntry.length > 0) {
+      const today = new Date();
+      const existingEntry = await moodRepository.getEntryByDate(user.id, today);
+      if (existingEntry) {
         return c.json({ error: "Mood entry for today already exists" }, 400);
       }
 
@@ -130,15 +122,12 @@ const app = new Hono()
       if (!user) {
         return c.json({ error: "Unauthorized" }, 401);
       }
+      const today = new Date();
 
-      const moodEntryDate = getStartOfToday();
-      const entries = await moodRepository.getEntriesByDate(
-        user.id,
-        moodEntryDate
-      );
+      const entry = await moodRepository.getEntryByDate(user.id, today);
 
       return c.json({
-        moodEntry: entries.length > 0 ? entries[0] : null,
+        moodEntry: entry,
       });
     } catch (error) {
       console.error("Error fetching mood entry:", error);
