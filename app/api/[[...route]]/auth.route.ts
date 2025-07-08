@@ -26,7 +26,7 @@ const app = new Hono()
 
       if (!isPasswordValid) {
         throw new HTTPException(400, {
-          message: "Invalid password",
+          message: "Wrong Credentials",
         });
       }
 
