@@ -228,9 +228,6 @@ npm run test         # Run test suite
 4. **Dashboard** - View mood trends and insights
 5. **Profile Management** - Update personal information
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👨‍💻 Author
 
