@@ -3,8 +3,6 @@ import authMiddleware from "./authMiddleware";
 import { zValidator } from "@hono/zod-validator";
 import moodEntrySchema from "@/schemas/mood.entry";
 
-import { MoodEntry } from "@prisma/client";
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { MoodRepository } from "@/prisma/repositories/mood.repository";
 const generateQuotePrompt = ({
@@ -218,11 +216,20 @@ const app = new Hono()
         startDate,
         today
       );
+      const chartData = [];
 
-      const chartData = entries.map((entry: MoodEntry) => ({
-        date: entry.createdAt.toISOString().split("T")[0],
-        entry,
-      }));
+      for (let i = 0; i < 11; i++) {
+        const date = new Date();
+        date.setDate(today.getDate() - i);
+        const entry = entries.find(
+          (e) => e.createdAt.toDateString() === date.toDateString()
+        );
+        chartData.push({
+          date: date.toISOString().split("T")[0],
+          entry
+        });
+        chartData.sort((a, b) => new Date(a.date).getDate() - new Date(b.date).getDate());
+      }
 
       return c.json({ chartData });
     } catch (error) {
