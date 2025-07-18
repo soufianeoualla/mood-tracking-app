@@ -35,7 +35,7 @@ const validateStep = (step: number, data: MoodData): ValidationErrors => {
 
   switch (step) {
     case 1:
-      if (data.mood < 0) {
+      if (!data.mood) {
         errors.mood = "Please select a mood before continuing.";
       }
       break;
@@ -50,7 +50,7 @@ const validateStep = (step: number, data: MoodData): ValidationErrors => {
       }
       break;
     case 4:
-      if (data.sleepHours < 0) {
+      if (!data.sleepHours) {
         errors.sleepHours = "Please select your sleep duration";
       }
       break;
